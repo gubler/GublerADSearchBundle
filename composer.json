@@ -34,10 +34,5 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": { "Gubler\\ADSearchBundle\\": "" }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.1.0"
-        }
     }
 }
