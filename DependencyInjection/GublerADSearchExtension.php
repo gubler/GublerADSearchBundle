@@ -28,11 +28,11 @@ class GublerADSearchExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('gubler_ad_search.ldap_username', $config['ldap_username']);
-        $container->setParameter('gubler_ad_search.ldap_password', $config['ldap_password']);
-        $container->setParameter('gubler_ad_search.ldap_host', $config['ldap_host']);
-        $container->setParameter('gubler_ad_search.ldap_port', $config['ldap_port']);
-        $container->setParameter('gubler_ad_search.ldap_base_dn', $config['ldap_base_dn']);
+        $container->setParameter('gubler_ad_search.ad_username', $config['ad_username']);
+        $container->setParameter('gubler_ad_search.ad_password', $config['ad_password']);
+        $container->setParameter('gubler_ad_search.ad_host', $config['ad_host']);
+        $container->setParameter('gubler_ad_search.ad_port', $config['ad_port']);
+        $container->setParameter('gubler_ad_search.ad_base_dn', $config['ad_base_dn']);
         $container->setParameter('gubler_ad_search.ad_search_class', $config['ad_search_class']);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

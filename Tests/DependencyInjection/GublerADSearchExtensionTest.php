@@ -19,20 +19,20 @@ class GublerADSearchExtensionTest extends AbstractExtensionTestCase
     {
         $this->load(
             array(
-                'ldap_username' => '',
-                'ldap_password' => '',
-                'ldap_host' => '',
-                'ldap_port' => 3268,
-                'ldap_base_dn' => '',
+                'ad_username' => '',
+                'ad_password' => '',
+                'ad_host' => '',
+                'ad_port' => 3268,
+                'ad_base_dn' => '',
                 'ad_search_class' => 'Gubler\ADSearchBundle\Domain\Search\ArraySearch',
             )
         );
 
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ldap_username', '');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ldap_password', '');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ldap_host', '');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ldap_port', 3268);
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ldap_base_dn', '');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_username', '');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_password', '');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_host', '');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_port', 3268);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_base_dn', '');
         $this->assertContainerBuilderHasParameter(
             'gubler_ad_search.ad_search_class',
             'Gubler\ADSearchBundle\Domain\Search\ArraySearch'

@@ -46,20 +46,20 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertProcessedConfigurationEquals(
             array(
-                array('ldap_username' => ''),
-                array('ldap_password' => ''),
-                array('ldap_host' => ''),
-                array('ldap_port' => 3268),
-                array('ldap_base_dn' => ''),
+                array('ad_username' => ''),
+                array('ad_password' => ''),
+                array('ad_host' => ''),
+                array('ad_port' => 3268),
+                array('ad_base_dn' => ''),
                 array('ad_search_class' => 'Gubler\ADSearchBundle\Domain\Search\ArraySearch'),
                 array('test_users' => array()),
             ),
             array(
-                'ldap_username' => '',
-                'ldap_password' => '',
-                'ldap_host' => '',
-                'ldap_port' => 3268,
-                'ldap_base_dn' => '',
+                'ad_username' => '',
+                'ad_password' => '',
+                'ad_host' => '',
+                'ad_port' => 3268,
+                'ad_base_dn' => '',
                 'ad_search_class' => 'Gubler\ADSearchBundle\Domain\Search\ArraySearch',
                 'test_users' => array(),
             )
