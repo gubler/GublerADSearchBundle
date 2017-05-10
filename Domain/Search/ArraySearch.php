@@ -28,19 +28,17 @@ class ArraySearch implements ActiveDirectorySearch
      **/
     protected $searchName;
 
+    /** @var LdapAdapterInterface */
+    protected $ldapAdapter;
+
     /**
-     * Constructor with arguments supplied by service
-     *
-     * @param string $ldapUsername
-     * @param string $ldapPassword
-     * @param string $ldapHost
-     * @param string $ldapPort
-     * @param string $ldapBaseDn
+     * @param LdapAdapterInterface $ldapAdapter
      */
-    public function __construct($ldapUsername, $ldapPassword, $ldapHost, $ldapPort, $ldapBaseDn)
+    public function __construct(LdapAdapterInterface $ldapAdapter)
     {
         $this->searchName = '';
         $this->users = $this->testUsers();
+        $this->ldapAdapter = $ldapAdapter;
     }
 
     /**
@@ -52,7 +50,7 @@ class ArraySearch implements ActiveDirectorySearch
      */
     public function search($name, $count = 30)
     {
-        $this->searchName = $this->__ldapEscape($name);
+        $this->searchName = $this->ldapAdapter->escape($name);
 
         // array_filter $users array against $name
         $filteredUsers = array_filter($this->users, array($this, 'filterUsersArray'));
@@ -81,7 +79,7 @@ class ArraySearch implements ActiveDirectorySearch
      */
     public function getUser($name)
     {
-        $this->searchName = $this->__ldapEscape($name);
+        $this->searchName = $this->ldapAdapter->escape($name);
 
         // array_filter $users array against $name
         $filteredUsers = array_filter($this->users, array($this, 'filterUsersArrayForSamaccountnameExactMatch'));
@@ -102,29 +100,6 @@ class ArraySearch implements ActiveDirectorySearch
 
         // return formatted results
         return $user;
-    }
-
-    /**
-     * Escape the string used in LDAP search in order to avoid
-     * "LDAP-injections"
-     *
-     * @param   string   $str
-     * @return  string
-     */
-    protected function __ldapEscape($str)
-    {
-        $metaChars = array ("\\00", '\\', '(', ')', '*');
-        $quotedMetaChars = array ();
-        foreach ($metaChars as $key => $value) {
-            $quotedMetaChars[$key] = '\\'.\dechex(\ord($value));
-        }
-        $str = str_replace(
-            $metaChars,
-            $quotedMetaChars,
-            $str
-        );
-
-        return ($str);
     }
 
     /**
@@ -169,14 +144,14 @@ class ArraySearch implements ActiveDirectorySearch
     {
         return [
             # System Admin
-            ['cn' => 'System Admin', 'samaccountname'=>  'admin', 'mail' => 'admin@example.com', 'title' => 'System Admin', 'telephonenumber' => '1234', 'physicaldeliveryofficename' => 'VISN'],
+            ['cn' => 'System Admin', 'samaccountname'=>  'admin', 'mail' => 'admin@example.com', 'title' => 'System Admin', 'telephonenumber' => '1234', 'physicaldeliveryofficename' => 'Cosmos'],
             # Atom Group
             ['cn' => 'Proton', 'samaccountname'=>  'ATOMproton', 'mail' => 'proton@example.com', 'title' => 'Proton', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
             ['cn' => 'Neutron', 'samaccountname'=> 'ATOMneutron', 'mail' => 'neutron@example.com', 'title' => 'Neutron', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
             ['cn' => 'Electron', 'samaccountname'=>  'ATOMelectron', 'mail' => 'electron@example.com', 'title' => 'Electron', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
             ['cn' => 'Quark', 'samaccountname'=>  'ATOMquark', 'mail' => 'quark@example.com', 'title' => 'Quark', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
             # α Group
-            ['cn' => 'Cat, Alpha', 'samaccountname'=>  'ALPHAcat', 'mail' => 'alpha.cat@example.com', 'title' => 'Alpha AI Coordinator', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
+            ['cn' => 'Cat, Alpha', 'samaccountname'=>  'ALPHAcat', 'mail' => 'alpha.cat@example.com', 'title' => 'Alpha Cat', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
             ['cn' => 'Siamese, Alpha', 'samaccountname'=>  'ALPHAsiamese', 'mail' => 'alpha.siamese@example.com', 'title' => 'Alpha Siamese', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
             ['cn' => 'Sphinx, Alpha', 'samaccountname'=>  'ALPHAsphinx', 'mail' => 'alpha.sphinx@example.com', 'title' => 'Alpha Sphinx', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
             ['cn' => 'Bengal, Alpha', 'samaccountname'=>  'ALPHAbengal', 'mail' => 'alpha.bengal@example.com', 'title' => 'Alpha Bengal', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],

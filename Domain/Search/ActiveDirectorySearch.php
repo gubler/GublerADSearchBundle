@@ -16,13 +16,9 @@ interface ActiveDirectorySearch
     /**
      * Constructor with arguments supplied via service
      *
-     * @param string $ldapUsername
-     * @param string $ldapPassword
-     * @param string $ldapHost
-     * @param string $ldapPort
-     * @param string $ldapBaseDn
+     * @param LdapAdapterInterface $ldapAdapter
      */
-    public function __construct($ldapUsername, $ldapPassword, $ldapHost, $ldapPort, $ldapBaseDn);
+    public function __construct(LdapAdapterInterface $ldapAdapter);
 
     /**
      * Search Active Directory for name and return a list of matches.
