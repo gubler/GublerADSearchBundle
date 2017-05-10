@@ -6,6 +6,7 @@
 namespace Gubler\ADSearchBundle\Domain\Search;
 
 use Gubler\ADSearchBundle\Entity\ADUser;
+use Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapterInterface;
 
 /**
  * Active Directory / LDAP Search

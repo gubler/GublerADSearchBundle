@@ -29,7 +29,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('ad_port')->defaultValue(3268)->end()
                 ->scalarNode('ad_base_dn')->defaultValue('')->end()
                 ->scalarNode('ad_search_class')->defaultValue('Gubler\ADSearchBundle\Domain\Search\ArraySearch')->end()
-                ->scalarNode('ldap_adapter_class')->defaultValue('Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapter')->end()
+                ->scalarNode('ldap_adapter_class')->defaultValue('Gubler\ADSearchBundle\Domain\LdapAdapter\LdapArrayAdapter')->end()
                 ->variableNode('test_users')
                     ->defaultValue(array())->end()
             ->end();

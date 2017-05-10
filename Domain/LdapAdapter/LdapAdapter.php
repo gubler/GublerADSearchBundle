@@ -3,7 +3,7 @@
  * LDAP Adapter to abstract calls to native LDAP functions
  */
 
-namespace Gubler\ADSearchBundle\Domain\Search;
+namespace Gubler\ADSearchBundle\Domain\LdapAdapter;
 
 /**
  * Class LdapAdapter
@@ -83,7 +83,7 @@ class LdapAdapter implements LdapAdapterInterface
      */
     public function __destruct()
     {
-        ldap_unbind($this->ldapConnection);
+        \ldap_unbind($this->ldapConnection);
     }
 
     /**
@@ -161,9 +161,9 @@ class LdapAdapter implements LdapAdapterInterface
      */
     protected function ldapConnect()
     {
-        $this->ldapConnection = ldap_connect($this->ldapHost, $this->ldapPort);
-        ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3);
-        ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0);
-        ldap_bind($this->ldapConnection, $this->ldapUsername, $this->ldapPassword);
+        $this->ldapConnection = \ldap_connect($this->ldapHost, $this->ldapPort);
+        \ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3);
+        \ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0);
+        \ldap_bind($this->ldapConnection, $this->ldapUsername, $this->ldapPassword);
     }
 }

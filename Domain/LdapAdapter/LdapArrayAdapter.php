@@ -1,11 +1,14 @@
 <?php
+/**
+ * LDAP Adapter to abstract calls to native LDAP functions
+ */
 
 namespace Gubler\ADSearchBundle\Domain\LdapAdapter;
 
 /**
- * Interface LdapAdapterInterface
+ * Class LdapArrayAdapter
  */
-interface LdapAdapterInterface
+class LdapArrayAdapter implements LdapAdapterInterface
 {
     /**
      * @param string $ldapUsername Username for initial binding to LDAP
@@ -20,21 +23,27 @@ interface LdapAdapterInterface
         string $ldapHost,
         string $ldapPort,
         string $ldapBaseDn
-    );
+    ) {
+    }
 
     /**
-     * combines ldap_control_paged_results, ldap_search and ldap_get_entries
+     * Closes connection to LDAP server
      *
+     * @return void
+     */
+    public function __destruct()
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+
      * @param string $filter
      * @param array  $attributes
      * @param int    $attrsonly
      * @param int    $sizelimit
      * @param int    $timelimit
      * @param int    $deref
-     *
-     * @see \ldap_search()
-     * @see \ldap_control_paged_result()
-     * @see \ldap_get_entries()
      *
      * @return array|bool
      */
@@ -45,14 +54,30 @@ interface LdapAdapterInterface
         int $sizelimit = 1000,
         int $timelimit = 300,
         int $deref = LDAP_DEREF_NEVER
-    );
+    ) {
+        return false;
+    }
 
     /**
-     * Escape the string used in LDAP search in order to avoid
-     * "LDAP-injections"
+     * {@inheritdoc}
      *
      * @param string $value
      * @return  string
      */
-    public function escape(string $value): string;
+    public function escape(string $value): string
+    {
+
+        $metaChars = array ("\\00", '\\', '(', ')', '*');
+        $quotedMetaChars = array ();
+        foreach ($metaChars as $key => $value) {
+            $quotedMetaChars[$key] = '\\'.\dechex(\ord($value));
+        }
+        $cleaned = str_replace(
+            $metaChars,
+            $quotedMetaChars,
+            $value
+        ); //replace them
+
+        return $cleaned;
+    }
 }

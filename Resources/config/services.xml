@@ -9,7 +9,7 @@
             <argument>%gubler_ad_search.ad_base_dn%</argument>
         </service>
         <service id="gubler_ad_search.ad_search" class="%gubler_ad_search.ad_search_class%">
-            <argument>@gubler_ad_search.ldap_adapter</argument>
+            <argument type="service" id="gubler_ad_search.ldap_adapter"/>
         </service>
     </services>
 </container>

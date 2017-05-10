@@ -5,6 +5,8 @@
 
 namespace Gubler\ADSearchBundle\Domain\Search;
 
+use Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapterInterface;
+
 /**
  * AD Search Interface
  *

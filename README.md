@@ -85,6 +85,19 @@ By default the Bundle uses the `ArraySearch` class. Once you have created a clas
 (either through extending the `AbstractServerSearch` class or implementing the `ActiveDirectorySearch` interface) you
 configure your application to use that class.
 
+### The LDAP Adapter Class
+
+This bundle abstracts LDAP interactions so that you can stub/mock the LDAP adapter when you need to test your
+Search Class. This bundle ships with two LDAP adapter classes:
+
+- **LdapArrayAdapter** (default) that is used with the default `ArraySearch` and never actually tries to
+  connect to LDAP.
+- **LdapAdapter** which is a more robust adapter that will try and connect to LDAP. This is designed to be used with
+  the `AbstractServerSearch` (specifically, your implementations of `AbstractServerSearch`).
+  
+If you need something more custom, you can also create your own adapter by implementing the `LdapAdapterInterfact` and
+set your LDAP adapter in your Symfony configuration (see below).
+
 ### Where to put the configuration
 
 You _can_ put all of the configuration in `app/config/config.yml`, but that locks you into a single search class and
@@ -113,4 +126,5 @@ Active Directory instance:
 ``` yaml
 gubler_ad_search:
     ad_search_class: Your\Search\Class
+    ldap_adapter_class: Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapter (or Your\Ldap\Adapter\Class)
 ```

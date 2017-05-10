@@ -39,7 +39,7 @@ class GublerADSearchExtensionTest extends AbstractExtensionTestCase
         );
         $this->assertContainerBuilderHasParameter(
             'gubler_ad_search.ldap_adapter_class',
-            'Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapter'
+            'Gubler\ADSearchBundle\Domain\LdapAdapter\LdapArrayAdapter'
         );
     }
 
