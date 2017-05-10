@@ -34,6 +34,7 @@ class GublerADSearchExtension extends Extension
         $container->setParameter('gubler_ad_search.ad_port', $config['ad_port']);
         $container->setParameter('gubler_ad_search.ad_base_dn', $config['ad_base_dn']);
         $container->setParameter('gubler_ad_search.ad_search_class', $config['ad_search_class']);
+        $container->setParameter('gubler_ad_search.ldap_adapter_class', $config['ldap_adapter_class']);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');

@@ -52,6 +52,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 array('ad_port' => 3268),
                 array('ad_base_dn' => ''),
                 array('ad_search_class' => 'Gubler\ADSearchBundle\Domain\Search\ArraySearch'),
+                array('ldap_adapter_class' => 'Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapter'),
                 array('test_users' => array()),
             ),
             array(
@@ -61,6 +62,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'ad_port' => 3268,
                 'ad_base_dn' => '',
                 'ad_search_class' => 'Gubler\ADSearchBundle\Domain\Search\ArraySearch',
+                'ldap_adapter_class' => 'Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapter',
                 'test_users' => array(),
             )
         );
