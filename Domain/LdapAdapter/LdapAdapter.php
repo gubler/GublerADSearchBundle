@@ -104,7 +104,7 @@ class LdapAdapter implements LdapAdapterInterface
         int $attrsonly = 0,
         int $sizelimit = 1000,
         int $timelimit = 300,
-        int $deref = LDAP_DEREF_NEVER
+        int $deref = null
     ) {
         \ldap_control_paged_result($this->ldapConnection, $sizelimit);
 
