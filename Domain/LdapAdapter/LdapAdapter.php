@@ -139,17 +139,16 @@ class LdapAdapter implements LdapAdapterInterface
      */
     public function escape(string $value): string
     {
-
-        $metaChars = array ("\\00", '\\', '(', ')', '*');
-        $quotedMetaChars = array ();
-        foreach ($metaChars as $key => $value) {
-            $quotedMetaChars[$key] = '\\'.\dechex(\ord($value));
+        $metaChars = array("\\00", '\\', '(', ')', '*');
+        $quotedMetaChars = array();
+        foreach($metaChars as $key => $val) {
+            $quotedMetaChars[$key] = '\\'.\dechex(\ord($val));
         }
         $cleaned = str_replace(
             $metaChars,
             $quotedMetaChars,
             $value
-        ); //replace them
+        );
 
         return $cleaned;
     }
