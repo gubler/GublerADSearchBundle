@@ -178,10 +178,11 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
      */
     protected function buildSearchFilter($name, $fields, $includeGroups)
     {
-        $filter = collect($fields)->reduce(function($current, $field) use ($name) {
-            $filterAddition = '('.$field.'='.$name.'.*)';
-            return $current.$filterAddition;
-        });
+        $filter = '';
+
+        foreach ($fields as $field) {
+            $filter = $filter.'('.$field.'='.$name.'*)';
+        }
 
         $filter = '(|'.$filter.')';
 
