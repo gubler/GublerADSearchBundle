@@ -5,24 +5,28 @@
 
 namespace Gubler\ADSearchBundle\Domain\LdapAdapter;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Class LdapArrayAdapter
  */
 class LdapArrayAdapter implements LdapAdapterInterface
 {
     /**
-     * @param string $ldapUsername Username for initial binding to LDAP
-     * @param string $ldapPassword Password for initial binding to LDAP
-     * @param string $ldapHost     LDAP server hostname
-     * @param string $ldapPort     LDAP server port
-     * @param string $ldapBaseDn   Base DN for LDAP tree searches
+     * @param string          $ldapUsername Username for initial binding to LDAP
+     * @param string          $ldapPassword Password for initial binding to LDAP
+     * @param string          $ldapHost     LDAP server hostname
+     * @param string          $ldapPort     LDAP server port
+     * @param string          $ldapBaseDn   Base DN for LDAP tree searches
+     * @param LoggerInterface $logger
      */
     public function __construct(
         string $ldapUsername,
         string $ldapPassword,
         string $ldapHost,
         string $ldapPort,
-        string $ldapBaseDn
+        string $ldapBaseDn,
+        LoggerInterface $logger
     ) {
     }
 
@@ -43,7 +47,6 @@ class LdapArrayAdapter implements LdapAdapterInterface
      * @param int    $attrsonly
      * @param int    $sizelimit
      * @param int    $timelimit
-     * @param int    $deref
      *
      * @return array|bool
      */
@@ -52,8 +55,7 @@ class LdapArrayAdapter implements LdapAdapterInterface
         array $attributes = [],
         int $attrsonly = 0,
         int $sizelimit = 1000,
-        int $timelimit = 300,
-        int $deref = null
+        int $timelimit = 300
     ) {
         return false;
     }

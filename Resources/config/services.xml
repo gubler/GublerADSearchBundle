@@ -7,6 +7,7 @@
             <argument>%gubler_ad_search.ad_host%</argument>
             <argument>%gubler_ad_search.ad_port%</argument>
             <argument>%gubler_ad_search.ad_base_dn%</argument>
+            <argument type="service" id="logger" />
         </service>
         <service id="gubler_ad_search.ad_search" class="%gubler_ad_search.ad_search_class%">
             <argument type="service" id="gubler_ad_search.ldap_adapter"/>

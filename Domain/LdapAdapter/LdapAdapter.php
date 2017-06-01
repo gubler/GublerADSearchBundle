@@ -5,6 +5,8 @@
 
 namespace Gubler\ADSearchBundle\Domain\LdapAdapter;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Class LdapAdapter
  */
@@ -52,6 +54,9 @@ class LdapAdapter implements LdapAdapterInterface
      */
     protected $ldapConnection = null;
 
+    /** @var LoggerInterface */
+    protected $logger;
+
     /**
      * @param string $ldapUsername Username for initial binding to LDAP
      * @param string $ldapPassword Password for initial binding to LDAP
@@ -64,13 +69,15 @@ class LdapAdapter implements LdapAdapterInterface
         string $ldapPassword,
         string $ldapHost,
         string $ldapPort,
-        string $ldapBaseDn
+        string $ldapBaseDn,
+        LoggerInterface $logger
     ) {
         $this->ldapUsername = $ldapUsername;
         $this->ldapPassword = $ldapPassword;
         $this->ldapHost = $ldapHost;
         $this->ldapPort = $ldapPort;
         $this->ldapBaseDn = $ldapBaseDn;
+        $this->logger = $logger;
 
         // connect and bind LDAP
         $this->ldapConnect();
@@ -94,7 +101,6 @@ class LdapAdapter implements LdapAdapterInterface
      * @param int    $attrsonly
      * @param int    $sizelimit
      * @param int    $timelimit
-     * @param int    $deref
      *
      * @return array|bool
      */
@@ -103,12 +109,13 @@ class LdapAdapter implements LdapAdapterInterface
         array $attributes = [],
         int $attrsonly = 0,
         int $sizelimit = 1000,
-        int $timelimit = 300,
-        int $deref = null
+        int $timelimit = 300
     ) {
         \ldap_control_paged_result($this->ldapConnection, $sizelimit);
 
-        $ldapSearch = ldap_search(
+        $this->logger->debug('LDAP Search with filter: `'.$filter.'`');
+
+        $ldapSearch = \ldap_search(
             $this->ldapConnection,
             $this->ldapBaseDn,
             $filter,
@@ -124,11 +131,14 @@ class LdapAdapter implements LdapAdapterInterface
             ),
             $attrsonly,
             $sizelimit,
-            $timelimit,
-            $deref
+            $timelimit
         );
 
-        return \ldap_get_entries($this->ldapConnection, $ldapSearch);
+        $results = \ldap_get_entries($this->ldapConnection, $ldapSearch);
+
+        $this->logger->debug('LDAP Search results: `'.json_encode($results).'`');
+
+        return $results;
     }
 
     /**
@@ -163,6 +173,9 @@ class LdapAdapter implements LdapAdapterInterface
         $this->ldapConnection = \ldap_connect($this->ldapHost, $this->ldapPort);
         \ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3);
         \ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0);
-        \ldap_bind($this->ldapConnection, $this->ldapUsername, $this->ldapPassword);
+        $bindStatus = \ldap_bind($this->ldapConnection, $this->ldapUsername, $this->ldapPassword);
+        if ($bindStatus === false) {
+            $this->logger->alert('Unable to bind to LDAP server');
+        }
     }
 }
