@@ -45,12 +45,19 @@ class ArraySearch implements ActiveDirectorySearch
     /**
      * {@inheritdoc}
      *
-     * @param string $name
-     * @param int    $count
-     * @return array
+     * @param string $name  Name of user to search for
+     * @param array  $fields fields to search
+     * @param int    $count Max number of results to return
+     * @param bool   $includeGroups
+     *
+     * @return ADUser[]
      */
-    public function search($name, $count = 30)
-    {
+    public function search(
+        string $name,
+        array $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'mail'],
+        int $count = 30,
+        bool $includeGroups = false
+    ): array {
         $this->searchName = $this->ldapAdapter->escape($name);
 
         // array_filter $users array against $name
@@ -76,9 +83,11 @@ class ArraySearch implements ActiveDirectorySearch
      * {@inheritdoc}
      *
      * @param string $name
-     * @return ADUser
+     * @param array  $fields
+     *
+     * @return ADUser|null
      */
-    public function getUser($name)
+    public function getUser(string $name, array $fields = ['samaccountname', 'mail'])
     {
         $this->searchName = $this->ldapAdapter->escape($name);
 
@@ -87,7 +96,7 @@ class ArraySearch implements ActiveDirectorySearch
 
         $user = null;
 
-        if (count($filteredUsers) == 1) {
+        if (count($filteredUsers) === 1) {
             $keys = array_keys($filteredUsers);
             $key = $keys[0];
             $user = (new ADUser($filteredUsers[$key]['samaccountname']))

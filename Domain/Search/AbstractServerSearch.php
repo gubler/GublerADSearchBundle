@@ -30,21 +30,21 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
     /**
      * Search LDAP for name in the list of fields and maps results to an array of ADUsers.
      *
-     * By default, this searches the 'cn', `samaccountname`, `displayname`, `surname`, and `email` fields.
+     * By default, this searches the 'cn', `samaccountname`, `displayname`, `surname`, and `mail` fields.
      *
      * @param string $name          name to search for
      * @param array  $fields        fields to be searched
      * @param int    $count         number of results to return
      * @param bool   $includeGroups include groups in search results
      *
-     * @return array Array of search results
+     * @return ADUser[]
      */
     public function search(
-        $name,
-        $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'email'],
-        $count = 30,
-        $includeGroups = false
-    ) {
+        string $name,
+        array $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'mail'],
+        int $count = 30,
+        bool $includeGroups = false
+    ): array {
         // Sanitize
         $searchName = $this->ldapAdapter->escape($name);
 
@@ -74,8 +74,8 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
 
             // skip if not an array (count of results) or no samaccountname (not a user) or Domain was not parsed
             if (!is_array($user) ||
-                !isset($user['samaccountname']) ||
-                $domain === false
+                $domain === false ||
+                !isset($user['samaccountname'])
             ) {
                 continue;
             }
@@ -97,15 +97,18 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
      * {@inheritdoc}
      *
      * @param string $name
-     * @return ADUser
+     * @param array  $fields
+     *
+     * @return ADUser|null
      */
-    public function getUser($name)
+    public function getUser(string $name, array $fields = ['samaccountname', 'mail'])
     {
         // Sanitize
         $searchName = $this->ldapAdapter->escape($name);
+        $filter = $this->buildSearchFilter($searchName, $fields, false);
 
         $info = $this->ldapAdapter->search(
-            '(samaccountname='.$searchName.')',
+            $filter,
             array(
                 'cn',
                 'dn',
@@ -144,14 +147,14 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
      * @param array $adFields
      * @return string
      */
-    abstract protected function chooseNameForAccount($adFields);
+    abstract protected function chooseNameForAccount(array $adFields): string;
 
     /**
      * @param string $adDn
      *
      * @return string
      */
-    abstract protected function dnToDomain($adDn);
+    abstract protected function dnToDomain(string $adDn): string;
 
     /**
      * Return value or null
@@ -160,7 +163,7 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
      * @param string $key Users array key
      * @return string|null
      **/
-    protected function valueOrNull($users, $key)
+    protected function valueOrNull(array $users, string $key)
     {
         if (isset($users[$key][0])) {
             return $users[$key][0];
@@ -176,7 +179,7 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
      *
      * @return string
      */
-    protected function buildSearchFilter($name, $fields, $includeGroups)
+    protected function buildSearchFilter(string $name, array $fields, bool $includeGroups): string
     {
         $filter = '';
 
