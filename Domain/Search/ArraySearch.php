@@ -15,20 +15,12 @@ use Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapterInterface;
  */
 class ArraySearch implements ActiveDirectorySearch
 {
-    /**
-     * test users
-     *
-     * @var array
-     **/
+    /** @var array **/
     protected $users;
-
-    /**
-     * string to filter
-     *
-     * @var string
-     **/
+    /** @var string **/
     protected $searchName;
-
+    /** @var array */
+    protected $searchFields;
     /** @var LdapAdapterInterface */
     protected $ldapAdapter;
 
@@ -59,6 +51,7 @@ class ArraySearch implements ActiveDirectorySearch
         bool $includeGroups = false
     ): array {
         $this->searchName = $this->ldapAdapter->escape($name);
+        $this->searchFields = $fields;
 
         // array_filter $users array against $name
         $filteredUsers = array_filter($this->users, array($this, 'filterUsersArray'));
@@ -90,9 +83,10 @@ class ArraySearch implements ActiveDirectorySearch
     public function getUser(string $name, array $fields = ['samaccountname', 'mail'])
     {
         $this->searchName = $this->ldapAdapter->escape($name);
+        $this->searchFields = $fields;
 
         // array_filter $users array against $name
-        $filteredUsers = array_filter($this->users, array($this, 'filterUsersArrayForSamaccountnameExactMatch'));
+        $filteredUsers = array_filter($this->users, array($this, 'filterUsersArrayExact'));
 
         $user = null;
 
@@ -121,27 +115,28 @@ class ArraySearch implements ActiveDirectorySearch
      **/
     protected function filterUsersArray($search)
     {
-        if (stripos($search['samaccountname'], $this->searchName) !== false ||
-            stripos($search['cn'], $this->searchName) !== false ||
-            stripos($search['mail'], $this->searchName) !== false
-        ) {
-            return true;
+        foreach ($this->searchFields as $searchField) {
+            if (stripos($search[$searchField], $this->searchName) !== false) {
+                return true;
+            }
         }
 
         return false;
     }
 
     /**
-     * test samaccountname for exact match
+     * test samaccountname and cn if they match search term
      *
      * @param  array $search array to search
      * @return bool
      * @SuppressWarnings("unused")
      **/
-    protected function filterUsersArrayForSamaccountnameExactMatch($search)
+    protected function filterUsersArrayExact($search)
     {
-        if ($search['samaccountname'] == $this->searchName) {
-            return true;
+        foreach ($this->searchFields as $searchField) {
+            if ($search[$searchField] === $this->searchName) {
+                return true;
+            }
         }
 
         return false;
