@@ -1,4 +1,12 @@
-<?php
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Gubler\ADSearchBundle\Domain\Search;
 
@@ -11,9 +19,8 @@ use Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapterInterface;
  * Used for local development and testing when no AD server may be available.
  *
  * @version 1.0.0
- * @package Gubler\ADSearchBundle\Domain\Search
  */
-class ArraySearch implements ActiveDirectorySearch
+class ArraySearchInterface implements ActiveDirectorySearchInterface
 {
     /** @var array **/
     protected $users;
@@ -44,12 +51,8 @@ class ArraySearch implements ActiveDirectorySearch
      *
      * @return ADUser[]
      */
-    public function search(
-        string $name,
-        array $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'mail'],
-        int $count = 30,
-        bool $includeGroups = false
-    ): array {
+    public function search(string $name, array $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'mail'], int $count = 30, bool $includeGroups = false): array
+    {
         $this->searchName = $this->ldapAdapter->escape($name);
         $this->searchFields = $fields;
 
@@ -110,7 +113,9 @@ class ArraySearch implements ActiveDirectorySearch
      * test samaccountname and cn if they contain search term
      *
      * @param  array $search array to search
+     *
      * @return bool
+     *
      * @SuppressWarnings("unused")
      **/
     protected function filterUsersArray($search)
@@ -128,7 +133,9 @@ class ArraySearch implements ActiveDirectorySearch
      * test samaccountname and cn if they match search term
      *
      * @param  array $search array to search
+     *
      * @return bool
+     *
      * @SuppressWarnings("unused")
      **/
     protected function filterUsersArrayExact($search)
@@ -148,25 +155,25 @@ class ArraySearch implements ActiveDirectorySearch
     protected function testUsers()
     {
         return [
-            # System Admin
-            ['cn' => 'System Admin', 'samaccountname'=>  'admin', 'mail' => 'admin@example.com', 'title' => 'System Admin', 'telephonenumber' => '1234', 'physicaldeliveryofficename' => 'Cosmos'],
-            # Atom Group
-            ['cn' => 'Proton', 'samaccountname'=>  'ATOMproton', 'mail' => 'proton@example.com', 'title' => 'Proton', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
-            ['cn' => 'Neutron', 'samaccountname'=> 'ATOMneutron', 'mail' => 'neutron@example.com', 'title' => 'Neutron', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
-            ['cn' => 'Electron', 'samaccountname'=>  'ATOMelectron', 'mail' => 'electron@example.com', 'title' => 'Electron', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
-            ['cn' => 'Quark', 'samaccountname'=>  'ATOMquark', 'mail' => 'quark@example.com', 'title' => 'Quark', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
-            # α Group
-            ['cn' => 'Cat, Alpha', 'samaccountname'=>  'ALPHAcat', 'mail' => 'alpha.cat@example.com', 'title' => 'Alpha Cat', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
-            ['cn' => 'Siamese, Alpha', 'samaccountname'=>  'ALPHAsiamese', 'mail' => 'alpha.siamese@example.com', 'title' => 'Alpha Siamese', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
-            ['cn' => 'Sphinx, Alpha', 'samaccountname'=>  'ALPHAsphinx', 'mail' => 'alpha.sphinx@example.com', 'title' => 'Alpha Sphinx', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
-            ['cn' => 'Bengal, Alpha', 'samaccountname'=>  'ALPHAbengal', 'mail' => 'alpha.bengal@example.com', 'title' => 'Alpha Bengal', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
-            ['cn' => 'Persian, Alpha', 'samaccountname'=>  'ALPHApersian', 'mail' => 'alpha.persian@example.com', 'title' => 'Alpha Persion', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
-            # β Group
-            ['cn' => 'Dog, Beta', 'samaccountname'=>  'BETAdog', 'mail' => 'beta.dog@example.com', 'title' => 'Beta Dog', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
-            ['cn' => 'Corgi, Beta', 'samaccountname'=>  'BETAcorgi', 'mail' => 'beta.corgi@example.com', 'title' => 'Beta Corgi', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
-            ['cn' => 'Mastiff, Beta', 'samaccountname'=>  'BETAmastiff', 'mail' => 'beta.mastiff@example.com', 'title' => 'Beta Mastiff', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
-            ['cn' => 'Poodle, Beta', 'samaccountname'=>  'BETApoodle', 'mail' => 'beta.poodle@example.com', 'title' => 'Beta Poodle', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
-            ['cn' => 'Boxer, Beta', 'samaccountname'=>  'BETAboxer', 'mail' => 'beta.boxer@example.com', 'title' => 'Beta Boxer', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
+            // System Admin
+            ['cn' => 'System Admin', 'samaccountname' => 'admin', 'mail' => 'admin@example.com', 'title' => 'System Admin', 'telephonenumber' => '1234', 'physicaldeliveryofficename' => 'Cosmos'],
+            // Atom Group
+            ['cn' => 'Proton', 'samaccountname' => 'ATOMproton', 'mail' => 'proton@example.com', 'title' => 'Proton', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
+            ['cn' => 'Neutron', 'samaccountname' => 'ATOMneutron', 'mail' => 'neutron@example.com', 'title' => 'Neutron', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
+            ['cn' => 'Electron', 'samaccountname' => 'ATOMelectron', 'mail' => 'electron@example.com', 'title' => 'Electron', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
+            ['cn' => 'Quark', 'samaccountname' => 'ATOMquark', 'mail' => 'quark@example.com', 'title' => 'Quark', 'physicaldeliveryofficename' => 'The Atom', 'telephonenumber' => '1234'],
+            // α Group
+            ['cn' => 'Cat, Alpha', 'samaccountname' => 'ALPHAcat', 'mail' => 'alpha.cat@example.com', 'title' => 'Alpha Cat', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
+            ['cn' => 'Siamese, Alpha', 'samaccountname' => 'ALPHAsiamese', 'mail' => 'alpha.siamese@example.com', 'title' => 'Alpha Siamese', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
+            ['cn' => 'Sphinx, Alpha', 'samaccountname' => 'ALPHAsphinx', 'mail' => 'alpha.sphinx@example.com', 'title' => 'Alpha Sphinx', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
+            ['cn' => 'Bengal, Alpha', 'samaccountname' => 'ALPHAbengal', 'mail' => 'alpha.bengal@example.com', 'title' => 'Alpha Bengal', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
+            ['cn' => 'Persian, Alpha', 'samaccountname' => 'ALPHApersian', 'mail' => 'alpha.persian@example.com', 'title' => 'Alpha Persion', 'physicaldeliveryofficename' => 'ALPHA', 'telephonenumber' => '1234'],
+            // β Group
+            ['cn' => 'Dog, Beta', 'samaccountname' => 'BETAdog', 'mail' => 'beta.dog@example.com', 'title' => 'Beta Dog', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
+            ['cn' => 'Corgi, Beta', 'samaccountname' => 'BETAcorgi', 'mail' => 'beta.corgi@example.com', 'title' => 'Beta Corgi', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
+            ['cn' => 'Mastiff, Beta', 'samaccountname' => 'BETAmastiff', 'mail' => 'beta.mastiff@example.com', 'title' => 'Beta Mastiff', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
+            ['cn' => 'Poodle, Beta', 'samaccountname' => 'BETApoodle', 'mail' => 'beta.poodle@example.com', 'title' => 'Beta Poodle', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
+            ['cn' => 'Boxer, Beta', 'samaccountname' => 'BETAboxer', 'mail' => 'beta.boxer@example.com', 'title' => 'Beta Boxer', 'physicaldeliveryofficename' => 'BETA', 'telephonenumber' => '1234'],
         ];
     }
 }

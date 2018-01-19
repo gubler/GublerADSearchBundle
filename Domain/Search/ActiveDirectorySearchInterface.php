@@ -1,7 +1,12 @@
-<?php
-/**
- * AD Search Interface
- **/
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Gubler\ADSearchBundle\Domain\Search;
 
@@ -13,7 +18,7 @@ use Gubler\ADSearchBundle\Entity\ADUser;
  *
  * @version 1.0.0
  **/
-interface ActiveDirectorySearch
+interface ActiveDirectorySearchInterface
 {
     /**
      * Constructor with arguments supplied via service
@@ -25,19 +30,14 @@ interface ActiveDirectorySearch
     /**
      * Search Active Directory for name and return a list of matches.
      *
-     * @param string $name  Name of user to search for
-     * @param array  $fields fields to search
-     * @param int    $count Max number of results to return
+     * @param string $name          Name of user to search for
+     * @param array  $fields        fields to search
+     * @param int    $count         Max number of results to return
      * @param bool   $includeGroups
      *
      * @return ADUser[]
      */
-    public function search(
-        string $name,
-        array $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'mail'],
-        int $count = 30,
-        bool $includeGroups = false
-    ): array;
+    public function search(string $name, array $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'mail'], int $count = 30, bool $includeGroups = false): array;
 
     /**
      * Retrieve a single user from Active Directory or null if no user found.

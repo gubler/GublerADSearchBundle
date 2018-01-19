@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="./vendor/autoload.php">
+
+<!-- http://phpunit.de/manual/6.2/en/appendixes.configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.2/phpunit.xsd"
+         colors="true"
+         bootstrap="vendor/autoload.php"
+>
     <testsuites>
-        <testsuite name="OdevLdapSearchBundle Test Suite">
-            <directory suffix="Test.php">./Tests</directory>
+        <testsuite name="GublerADSearchBundle Test Suite">
+            <directory>./Tests/unit</directory>
         </testsuite>
     </testsuites>
 
@@ -10,9 +16,9 @@
         <whitelist>
             <directory>./</directory>
             <exclude>
-                <directory>./Resources/</directory>
-                <directory>./Tests/</directory>
-                <directory>./vendor/</directory>
+                <directory>./Resources</directory>
+                <directory>./Tests</directory>
+                <directory>./vendor</directory>
             </exclude>
         </whitelist>
     </filter>

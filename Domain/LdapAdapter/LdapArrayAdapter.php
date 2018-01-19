@@ -1,6 +1,11 @@
-<?php
-/**
- * LDAP Adapter to abstract calls to native LDAP functions
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Gubler\ADSearchBundle\Domain\LdapAdapter;
@@ -20,14 +25,8 @@ class LdapArrayAdapter implements LdapAdapterInterface
      * @param string          $ldapBaseDn   Base DN for LDAP tree searches
      * @param LoggerInterface $logger
      */
-    public function __construct(
-        string $ldapUsername,
-        string $ldapPassword,
-        string $ldapHost,
-        string $ldapPort,
-        string $ldapBaseDn,
-        LoggerInterface $logger
-    ) {
+    public function __construct(string $ldapUsername, string $ldapPassword, string $ldapHost, string $ldapPort, string $ldapBaseDn, LoggerInterface $logger)
+    {
     }
 
     /**
@@ -41,7 +40,7 @@ class LdapArrayAdapter implements LdapAdapterInterface
 
     /**
      * {@inheritdoc}
-
+     *
      * @param string $filter
      * @param array  $attributes
      * @param int    $attrsonly
@@ -50,13 +49,8 @@ class LdapArrayAdapter implements LdapAdapterInterface
      *
      * @return array|bool
      */
-    public function search(
-        string $filter,
-        array $attributes = [],
-        int $attrsonly = 0,
-        int $sizelimit = 1000,
-        int $timelimit = 300
-    ) {
+    public function search(string $filter, array $attributes = [], int $attrsonly = 0, int $sizelimit = 1000, int $timelimit = 300)
+    {
         return false;
     }
 
@@ -64,6 +58,7 @@ class LdapArrayAdapter implements LdapAdapterInterface
      * {@inheritdoc}
      *
      * @param string $value
+     *
      * @return  string
      */
     public function escape(string $value): string

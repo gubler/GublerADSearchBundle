@@ -1,7 +1,13 @@
-<?php
-/**
- * DI Extension
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 namespace Gubler\ADSearchBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -10,10 +16,7 @@ use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
- * This is the class that loads and manages your bundle configuration
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
- * @package Gubler\ADSearchBundle\DependencyInjection
+ * This is the class that loads and manages bundle configuration
  */
 class GublerADSearchExtension extends Extension
 {

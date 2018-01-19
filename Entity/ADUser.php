@@ -1,16 +1,17 @@
-<?php
-/**
- * Represents an AD User Record
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
  *
- * @author Daryl Gubler <daryl.gubler@va.gov>
- **/
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Gubler\ADSearchBundle\Entity;
 
 /**
  * Class ADUser
- *
- * @package Gubler\ADSearchBundle\Entity
  */
 class ADUser
 {
@@ -103,6 +104,7 @@ class ADUser
      * Set username
      *
      * @param  string $username
+     *
      * @return ADUser
      **/
     public function setUsername($username)
@@ -126,6 +128,7 @@ class ADUser
      * Set domain
      *
      * @param  string $domain
+     *
      * @return ADUser
      **/
     public function setDomain($domain)
@@ -149,6 +152,7 @@ class ADUser
      * Set name
      *
      * @param  string $name
+     *
      * @return ADUser
      **/
     public function setName($name)
@@ -172,6 +176,7 @@ class ADUser
      * Set title
      *
      * @param  string $title
+     *
      * @return ADUser
      **/
     public function setTitle($title)
@@ -195,6 +200,7 @@ class ADUser
      * Set office
      *
      * @param  string $office
+     *
      * @return ADUser
      **/
     public function setOffice($office)
@@ -218,6 +224,7 @@ class ADUser
      * Set phone
      *
      * @param  string $phone
+     *
      * @return ADUser
      **/
     public function setPhone($phone)
@@ -241,6 +248,7 @@ class ADUser
      * Set email
      *
      * @param  string $email
+     *
      * @return ADUser
      **/
     public function setEmail($email)

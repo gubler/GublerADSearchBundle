@@ -1,15 +1,21 @@
-<?php
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Gubler\ADSearchBundle\Example;
 
-use Gubler\ADSearchBundle\Domain\Search\AbstractServerSearch;
+use Gubler\ADSearchBundle\Domain\Search\AbstractServerSearchInterface;
 
 /**
  * Class ExampleServerSearch
- *
- * @package Gubler\ADSearchBundle\Example
  */
-class ExampleServerSearch extends AbstractServerSearch
+class ExampleServerSearch extends AbstractServerSearchInterface
 {
     /**
      * Choose the name between the `cn` and `displayname` fields
@@ -60,5 +66,4 @@ class ExampleServerSearch extends AbstractServerSearch
         // if no OU, then return false so AD object can be skipped
         return false;
     }
-
 }

@@ -1,6 +1,11 @@
-<?php
-/**
- * Active Directory / LDAP Search
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Gubler\ADSearchBundle\Domain\Search;
@@ -12,9 +17,8 @@ use Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapterInterface;
  * Active Directory / LDAP Search
  *
  * @version 1.0.0
- * @package Gubler\ADSearchBundle\Domain\Search
  */
-abstract class AbstractServerSearch implements ActiveDirectorySearch
+abstract class AbstractServerSearchInterface implements ActiveDirectorySearchInterface
 {
     /** @var LdapAdapterInterface */
     protected $ldapAdapter;
@@ -39,12 +43,8 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
      *
      * @return ADUser[]
      */
-    public function search(
-        string $name,
-        array $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'mail'],
-        int $count = 30,
-        bool $includeGroups = false
-    ): array {
+    public function search(string $name, array $fields = ['cn', 'samaccountname', 'displayname', 'surname', 'mail'], int $count = 30, bool $includeGroups = false): array
+    {
         // Sanitize
         $searchName = $this->ldapAdapter->escape($name);
 
@@ -74,7 +74,7 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
 
             // skip if not an array (count of results) or no samaccountname (not a user) or Domain was not parsed
             if (!is_array($user) ||
-                $domain === false ||
+                false === $domain ||
                 !isset($user['samaccountname'])
             ) {
                 continue;
@@ -145,6 +145,7 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
      * Get the display name for the account
      *
      * @param array $adFields
+     *
      * @return string
      */
     abstract protected function chooseNameForAccount(array $adFields): string;
@@ -159,8 +160,9 @@ abstract class AbstractServerSearch implements ActiveDirectorySearch
     /**
      * Return value or null
      *
-     * @param array $users Users array
-     * @param string $key Users array key
+     * @param array  $users Users array
+     * @param string $key   Users array key
+     *
      * @return string|null
      **/
     protected function valueOrNull(array $users, string $key)

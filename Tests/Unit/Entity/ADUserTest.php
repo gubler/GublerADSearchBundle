@@ -1,18 +1,21 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: vhatamgubled2
- * Date: 1/4/17
- * Time: 9:04 AM
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
-
-namespace Gubler\ADSearchBundle\Tests\Entity;
-
+namespace Gubler\ADSearchBundle\Tests\Unit\Entity;
 
 use Gubler\ADSearchBundle\Entity\ADUser;
+use PHPUnit\Framework\TestCase;
 
-
-class ADUserTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class ADUserTest
+ */
+class ADUserTest extends TestCase
 {
 
     /** @test */
@@ -25,6 +28,7 @@ class ADUserTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     *
      * @expectedException \Error
      */
     public function canNotCreateWithoutUsername()
