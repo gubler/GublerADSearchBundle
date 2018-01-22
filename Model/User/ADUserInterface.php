@@ -8,9 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Gubler\ADSearchBundle\Model;
+namespace Gubler\ADSearchBundle\Model\User;
 
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Ldap\Entry;
 
 /**
  * Interface ADUserInterface
@@ -25,27 +26,17 @@ interface ADUserInterface
     /**
      * @return string
      */
-    public function getADSamAccountName(): string;
+    public function getADDn(): string;
 
     /**
-     * @return string
+     * @return Entry
      */
-    public function getADDomain(): string;
+    public function getADEntry(): Entry;
 
     /**
-     * @return string
-     */
-    public function getADEmail(): string;
-
-    /**
-     * @return ADAttributes
-     */
-    public function getADAttributes(): ADAttributes;
-
-    /**
-     * @param ADAttributes $attributes
+     * @param Entry $entry
      *
      * @return ADUserInterface
      */
-    public function setADAttributes(ADAttributes $attributes): self;
+    public function setADInfo(Entry $entry): ADUserInterface;
 }

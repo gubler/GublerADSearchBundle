@@ -33,11 +33,12 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given connection setting is :connectionType
+     * @Given setting :settingName is :settingValue
      *
-     * @param string $connectionType
+     * @param string $settingName
+     * @param mixed  $settingValue
      */
-    public function connectionSettingIs(string $connectionType)
+    public function settingValueIs(string $settingName, $settingValue)
     {
         throw new PendingException();
     }

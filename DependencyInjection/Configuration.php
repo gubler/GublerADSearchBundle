@@ -28,17 +28,39 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->scalarNode('ad_username')->defaultValue('')->end()
-            ->scalarNode('ad_password')->defaultValue('')->end()
-            ->scalarNode('ad_host')->defaultValue('')->end()
-            ->scalarNode('ad_port')->defaultValue(3268)->end()
-            ->scalarNode('ad_base_dn')->defaultValue('')->end()
-            ->scalarNode('ad_search_class')->defaultValue(
-                'Gubler\ADSearchBundle\Domain\Search\ArraySearchInterface'
-            )->end()
-            ->scalarNode('ldap_adapter_class')->defaultValue('Gubler\ADSearchBundle\Domain\LdapAdapter\LdapArrayAdapter')->end()
-            ->variableNode('test_users')->defaultValue(array())->end()
-            ->end();
+                ->enumNode('connection_type')
+                    ->values(array('array', 'server'))
+                    ->info('Only accepts `array` or `server`')
+                    ->defaultValue('array')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->scalarNode('ad_array_user_json')
+                    ->info('Connection Type `array` only: path to test users JSON file')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('ad_server_address')
+                    ->info('Connection Type `server` only: Address of Active Directory Server')
+                    ->defaultNull()
+                ->end()
+                ->integerNode('ad_server_port')
+                    ->info('Connection Type `server` only: Port to connect to Active Directory on')
+                    ->defaultValue(3268)
+                ->end()
+                ->scalarNode('ad_server_bind_user_dn')
+                    ->info('Connection Type `server` only: Username to bind to AD with')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('ad_server_bind_user_password')
+                    ->info('Connection Type `server` only: Password to bind to AD with')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('ad_server_domain_resolver')
+                    ->info('Connection Type `server` only: Class Name for determining user domain')
+                    ->defaultNull()
+                ->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }

@@ -1,5 +1,27 @@
 # GublerADSearchBundle TODOs
 
+## Needs
+
+- AD to User Adapter
+    - ADUser interface for user accounts
+        - Set AD information
+            - ADguid
+            - ADemail
+            - ADsamAccountName
+            - ADrecord
+        - getADGuid
+        - getADEmail (nullable)
+        - getADSamAccountName
+        - getADDomain (nullable)
+        - getADRecord
+    
+- Class for Searching AD
+    - Abstract Class for determining Domain <- Interface?
+        - Passed User's AD information
+- Class for searching Array
+    - Default test user JSON
+    - Command for creating JSON for customization
+
 ## What is the Use Case for this bundle?
 
 - I need to search for a user in AD to create a new User in my system
