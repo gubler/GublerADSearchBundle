@@ -31,15 +31,18 @@ class GublerADSearchExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('gubler_ad_search.ad_username', $config['ad_username']);
-        $container->setParameter('gubler_ad_search.ad_password', $config['ad_password']);
-        $container->setParameter('gubler_ad_search.ad_host', $config['ad_host']);
-        $container->setParameter('gubler_ad_search.ad_port', $config['ad_port']);
-        $container->setParameter('gubler_ad_search.ad_base_dn', $config['ad_base_dn']);
-        $container->setParameter('gubler_ad_search.ad_search_class', $config['ad_search_class']);
-        $container->setParameter('gubler_ad_search.ldap_adapter_class', $config['ldap_adapter_class']);
+        $container->setParameter('gubler_ad_search.connection_type', $config['connection_type']);
+        $container->setParameter('gubler_ad_search.array_test_users', $config['array_test_users']);
+        $container->setParameter('gubler_ad_search.server_address', $config['server_address']);
+        $container->setParameter('gubler_ad_search.server_port', $config['server_port']);
+        $container->setParameter('gubler_ad_search.server_bind_dn', $config['']);
+        $container->setParameter('gubler_ad_search.server_bind_password', $config['server_bind_password']);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+        if ($config['connection_type'] === 'array') {
+            $loader->load('array_services.xml');
+        } else {
+            $loader->load('server_services.xml');
+        }
     }
 }

@@ -17,9 +17,18 @@ use Symfony\Component\Ldap\Ldap;
 
 class ServerSearch implements ADSearchAdapterInterface
 {
+    /**
+     * @var Ldap
+     */
     protected $ldap;
 
-    public function __construct(string $host, int $port, string $baseDn, string $bindDn, string $bindPassword)
+    /**
+     * @param string $host
+     * @param int    $port
+     * @param string $bindDn
+     * @param string $bindPassword
+     */
+    public function __construct(string $host, int $port, string $bindDn, string $bindPassword)
     {
         $this->ldap = Ldap::create(
             'ext_ldap',
@@ -37,7 +46,15 @@ class ServerSearch implements ADSearchAdapterInterface
      */
     public function search(string $term, array $fields): array
     {
-        return $this->ldap->query('', $this->buildSearchFilter($term, $fields))->execute();
+        $escapedTerm = $this->escape($term);
+
+        return $this->ldap
+            ->query(
+                '',
+                $this->buildSearchFilter($escapedTerm, $fields)
+            )
+            ->execute()
+        ;
     }
 
     /**
@@ -49,10 +66,11 @@ class ServerSearch implements ADSearchAdapterInterface
      */
     public function findOne(string $byField, string $term): ?Entry
     {
+        $escapedTerm = $this->escape($term);
 
         $results = $this->ldap->query(
             '',
-            $this->buildSearchFilter($term, [$byField])
+            $this->buildSearchFilter($escapedTerm, [$byField])
         )->execute();
 
         if (empty($results)) {
@@ -83,5 +101,27 @@ class ServerSearch implements ADSearchAdapterInterface
         $filter = '(|'.$filter.')';
 
         return '(&(objectclass=user)'.$filter.')';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param string $value
+     * @return  string
+     */
+    public function escape(string $value): string
+    {
+        $metaChars = array("\\00", '\\', '(', ')', '*');
+        $quotedMetaChars = array();
+        foreach($metaChars as $key => $val) {
+            $quotedMetaChars[$key] = '\\'.\dechex(\ord($val));
+        }
+        $cleaned = str_replace(
+            $metaChars,
+            $quotedMetaChars,
+            $value
+        );
+
+        return $cleaned;
     }
 }
