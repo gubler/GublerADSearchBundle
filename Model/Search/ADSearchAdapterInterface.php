@@ -10,6 +10,7 @@
 
 namespace Gubler\ADSearchBundle\Model\Search;
 
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 
 /**
@@ -32,4 +33,11 @@ interface ADSearchAdapterInterface
      * @return null|Entry
      */
     public function findOne(string $byField, string $term): ?Entry;
+
+    /**
+     * @param UuidInterface $guid
+     *
+     * @return null|Entry
+     */
+    public function find(UuidInterface $guid): ?Entry;
 }

@@ -12,9 +12,14 @@ namespace Gubler\ADSearchBundle\Model\Search\ActiveDirectory;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
 use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Ldap;
+use Symfony\Component\VarDumper\VarDumper;
 
+/**
+ * Class ServerSearch
+ */
 class ServerSearch implements ADSearchAdapterInterface
 {
     /**
@@ -54,6 +59,7 @@ class ServerSearch implements ADSearchAdapterInterface
                 $this->buildSearchFilter($escapedTerm, $fields)
             )
             ->execute()
+            ->toArray()
         ;
     }
 
@@ -62,6 +68,7 @@ class ServerSearch implements ADSearchAdapterInterface
      * @param string $term
      *
      * @return null|Entry
+     *
      * @throws NonUniqueADResultException
      */
     public function findOne(string $byField, string $term): ?Entry
@@ -71,6 +78,31 @@ class ServerSearch implements ADSearchAdapterInterface
         $results = $this->ldap->query(
             '',
             $this->buildSearchFilter($escapedTerm, [$byField])
+        )->execute();
+
+        if (empty($results)) {
+            return null;
+        }
+
+        if (count($results) > 1) {
+            throw new NonUniqueADResultException();
+        }
+
+        return $results[0];
+    }
+
+    /**
+     * @param UuidInterface $guid
+     *
+     * @return null|Entry
+     *
+     * @throws NonUniqueADResultException
+     */
+    public function find(UuidInterface $guid): ?Entry
+    {
+        $results = $this->ldap->query(
+            '',
+            $this->buildSearchFilter($this->uuidToGuidHex($guid), ['objectGUID'])
         )->execute();
 
         if (empty($results)) {
@@ -107,13 +139,14 @@ class ServerSearch implements ADSearchAdapterInterface
      * {@inheritdoc}
      *
      * @param string $value
+     *
      * @return  string
      */
-    public function escape(string $value): string
+    protected function escape(string $value): string
     {
         $metaChars = array("\\00", '\\', '(', ')', '*');
         $quotedMetaChars = array();
-        foreach($metaChars as $key => $val) {
+        foreach ($metaChars as $key => $val) {
             $quotedMetaChars[$key] = '\\'.\dechex(\ord($val));
         }
         $cleaned = str_replace(
@@ -123,5 +156,22 @@ class ServerSearch implements ADSearchAdapterInterface
         );
 
         return $cleaned;
+    }
+
+    /**
+     * @param UuidInterface $uuid
+     *
+     * @return string
+     */
+    protected function uuidToGuidHex(UuidInterface $uuid): string
+    {
+        $guid = $uuid->getBytes();
+        $guidHex = '';
+        $length = \strlen($guid);
+        for ($i = 0; $i < $length; ++$i) {
+            $guidHex .= '\\'.str_pad(dechex(\ord($guid[$i])), 2, '0', STR_PAD_LEFT);
+        }
+
+        return $guidHex;
     }
 }

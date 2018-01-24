@@ -18,10 +18,10 @@ use \Throwable;
 class NonUniqueADResultException extends \Exception
 {
     /**
-     * @param int            $code
+     * @param int             $code
      * @param \Throwable|null $previous
      */
-    public function __construct(int $code = 0, \Throwable $previous = null)
+    public function __construct(int $code = 500, \Throwable $previous = null)
     {
         $message = 'Search returned multiple results. Should only return one result';
 

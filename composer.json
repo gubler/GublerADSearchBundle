@@ -18,7 +18,8 @@
         "symfony/ldap": "^3.4|^4.0",
         "illuminate/support": "^5.3",
         "ramsey/uuid": "^3.7",
-        "symfony/http-kernel": "^4.0"
+        "symfony/http-kernel": "^4.0",
+        "fzaninotto/faker": "^1.7"
     },
     "require-dev": {
         "escapestudios/symfony2-coding-standard": "^3.0",
@@ -26,7 +27,9 @@
         "phpunit/phpunit": "^6.2",
         "phpstan/phpstan": "^0.9",
         "behat/behat": "^3.4",
-        "matthiasnoback/symfony-dependency-injection-test": "^2.3"
+        "matthiasnoback/symfony-dependency-injection-test": "^2.3",
+        "symfony/var-dumper": "^4.0",
+        "symfony/console": "^4.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -35,6 +38,6 @@
     },
     "scripts": {
         "phpcs": "phpcs -p --standard=./ruleset.xml",
-        "phpunit": "./vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=coverage.xml"
+        "phpunit": "./vendor/bin/phpunit"
     }
 }

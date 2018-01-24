@@ -55,9 +55,9 @@ class ADSearchService
      *
      * @return null|Entry
      */
-    public function findByGuid(UuidInterface $guid): ?Entry
+    public function find(UuidInterface $guid): ?Entry
     {
-        return $this->adapter->findOne('objectGUID', $this->uuidToGuidHex($guid));
+        return $this->adapter->find($guid);
     }
 
     /**
@@ -68,21 +68,5 @@ class ADSearchService
     public function findBySamAccountName(string $samAccountName): ?Entry
     {
         return $this->adapter->findOne('samaccountname', $samAccountName);
-    }
-
-    /**
-     * @param UuidInterface $uuid
-     *
-     * @return string
-     */
-    protected function uuidToGuidHex(UuidInterface $uuid): string
-    {
-        $guid = $uuid->getBytes();
-        $guidHex = '';
-        for ($i = 0; $i < strlen($guid); $i++) {
-            $guidHex .= '\\'.str_pad(dechex(ord($guid[$i])), 2, '0', STR_PAD_LEFT);
-        }
-
-        return $guidHex;
     }
 }

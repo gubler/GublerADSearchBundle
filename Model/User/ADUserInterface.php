@@ -29,6 +29,11 @@ interface ADUserInterface
     public function getADDn(): string;
 
     /**
+     * @return string
+     */
+    public function getADSamAccountName(): string;
+
+    /**
      * @return Entry
      */
     public function getADEntry(): Entry;

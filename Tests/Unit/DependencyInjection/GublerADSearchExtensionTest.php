@@ -10,42 +10,75 @@
 namespace Gubler\ADSearchBundle\Tests\Unit\DependencyInjection;
 
 use Gubler\ADSearchBundle\DependencyInjection\GublerADSearchExtension;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 
 /**
  * GublerADSearchExtensionTest
  */
-class GublerADSearchExtensionTest extends TestCase
+class GublerADSearchExtensionTest extends AbstractExtensionTestCase
 {
     /**
-     * @var GublerADSearchExtension
+     * Load Array Config
      */
-    private $extension;
-    /**
-     * @var ContainerBuilder
-     */
-    private $container;
+    public function loadArrayConfig()
+    {
+        parent::load([
+            'connection_type' => 'array',
+            'array_test_users' => 'testUsers.json',
+        ]);
+    }
 
     /**
-     * {@inheritdoc}
+     * Load Server Config
      */
-    protected function setUp()
+    public function loadServerConfig()
     {
-        $this->extension = new GublerADSearchExtension();
-        $this->container = new ContainerBuilder();
-        $this->container->set('annotations.cached_reader', new \stdClass());
-        $this->container->registerExtension($this->extension);
+        parent::load([
+            'connection_type' => 'server',
+            'server_address' => 'test_server',
+            // 'server_port' => 3268,
+            'server_bind_user' => 'testUser',
+            'server_bind_password' => 'password',
+        ]);
     }
+
     /**
-     * Test load extension
+     * @test
      */
-    public function testLoadExtension(): void
+    public function correctParametersLoadedForServerConfig()
     {
-        $this->container->prependExtensionConfig($this->extension->getAlias(), ['auto_filter_forms' => true]);
-        $this->container->loadFromExtension($this->extension->getAlias());
-        $this->container->compile();
-        // Check that services have been loaded
-        static::assertTrue($this->container->has('bukashk0zzz_filter.filter'));
+        $this->loadServerConfig();
+
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.connection_type', 'server');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_port', 3268);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_user', 'testUser');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_password', 'password');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.array_test_users', null);
+    }
+
+    /**
+     * @test
+     */
+    public function correctParametersLoadedForArrayConfig()
+    {
+        $this->loadArrayConfig();
+
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.connection_type', 'array');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_port', 3268);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_user', null);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_password', null);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.array_test_users', 'testUsers.json');
+    }
+
+    /**
+     * Load the container extension
+     *
+     * @return array
+     */
+    protected function getContainerExtensions(): array
+    {
+        return array(
+            new GublerADSearchExtension(),
+        );
     }
 }
