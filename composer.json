@@ -18,8 +18,7 @@
         "symfony/ldap": "^3.4|^4.0",
         "illuminate/support": "^5.3",
         "ramsey/uuid": "^3.7",
-        "symfony/http-kernel": "^4.0",
-        "fzaninotto/faker": "^1.7"
+        "symfony/http-kernel": "^4.0"
     },
     "require-dev": {
         "escapestudios/symfony2-coding-standard": "^3.0",

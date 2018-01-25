@@ -6,40 +6,21 @@ This is a Symfony 3 bundle to make searching Active Directory (or other LDAP dir
 
 ``` php
 $adSearch = $this->get('gubler_ad_search.ad_search');
-
 $users = $adSearch->search('user'); // get an array of ADUser objects for search term
-
-$user = $adSearch->getUser('user'); // get a single ADUser with the supplied `samaccountname`
+$guid = Uuid::fromString('...'); // Create a Ramsey/UUID from the user's AD GUID
+$user = $adSearch->find($guid); // Find the single user with the matching GUID
+$user = $adSearch->findBySamAccountName('user'); // get a single user with the supplied `samaccountname`
 ```
 
-## Installation
+## Installation (with Flex)
 
 Installation with composer:
 
-``` json
-    ...
-    "require": {
-        ...
-        "gubler/ad-search-bundle": "0.1.*",
-        ...
-    },
-    ...
+```bash
+composer require gubler/ad-search-bundle
 ```
 
-Next, be sure to enable the bundle in your `app/AppKernel.php` file:
-
-``` php
-public function registerBundles()
-{
-    return array(
-        // ...
-        new Gubler\ADSearchBundle\GublerADSearchBundle(),
-        // ...
-    );
-}
-```
-
-## Configuration
+### Configuration
 
 To configure the bundle, you must set the AD Connection information and what search class to use.
 
@@ -128,3 +109,9 @@ gubler_ad_search:
     ad_search_class: Your\Search\Class
     ldap_adapter_class: Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapter (or Your\Ldap\Adapter\Class)
 ```
+
+## Customization
+
+### Custom LDAP Connection
+
+### Custom Search Adapter

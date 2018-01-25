@@ -15,7 +15,6 @@ use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Ldap;
-use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Class ServerSearch
@@ -28,19 +27,11 @@ class ServerSearch implements ADSearchAdapterInterface
     protected $ldap;
 
     /**
-     * @param string $host
-     * @param int    $port
-     * @param string $bindDn
-     * @param string $bindPassword
+     * @param LdapFactoryInterface $ldapFactory
      */
-    public function __construct(string $host, int $port, string $bindDn, string $bindPassword)
+    public function __construct(LdapFactoryInterface $ldapFactory)
     {
-        $this->ldap = Ldap::create(
-            'ext_ldap',
-            array('connection_string' => 'ldap://'.$host.':'.$port)
-        );
-
-        $this->ldap->bind($bindDn, $bindPassword);
+        $this->ldap = $ldapFactory->getLdapConnection();
     }
 
     /**
