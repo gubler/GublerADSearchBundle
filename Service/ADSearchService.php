@@ -61,12 +61,12 @@ class ADSearchService
     }
 
     /**
-     * @param string $samAccountName
+     * @param string $sAMAccountName
      *
      * @return null|Entry
      */
-    public function findBySamAccountName(string $samAccountName): ?Entry
+    public function findBySamAccountName(string $sAMAccountName): ?Entry
     {
-        return $this->adapter->findOne('samaccountname', $samAccountName);
+        return $this->adapter->findOne('samaccountname', $sAMAccountName);
     }
 }

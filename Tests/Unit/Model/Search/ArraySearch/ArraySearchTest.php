@@ -72,6 +72,16 @@ class ArraySearchTest extends TestCase
     /**
      * @test
      */
+    public function findCanReturnNull()
+    {
+        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA2');
+        $entry = $this->search->find($guid);
+        $this->assertNull($entry);
+    }
+
+    /**
+     * @test
+     */
     public function canFindUserByField()
     {
         $expected = 'Particle, Proton';

@@ -48,18 +48,11 @@ class ArraySearch implements ADSearchAdapterInterface
                     }
 
                     // if value is array, check the each value in the array
-                    if (\is_array($value)) {
-                        foreach ($value as $test) {
-                            if ($this->testTermInValue($term, $test)) {
-                                return true;
-                            }
+                    /** @var array $value */
+                    foreach ($value as $test) {
+                        if ($this->testTermInValue($term, $test)) {
+                            return true;
                         }
-
-                        continue;
-                    }
-
-                    if ($this->testTermInValue($term, $value)) {
-                        return true;
                     }
                 }
 
