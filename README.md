@@ -1,130 +1,97 @@
 # GublerADSearchBundle
 
-This is a Symfony 3 bundle to make searching Active Directory (or other LDAP directories) easier.
+This is a Symfony 4 bundle to make searching Active Directory (or other LDAP directories) easier.
+
+This will also work with Symfony 3.4 if you are running PHP >= 7.1.3.
 
 ## Example
 
-``` php
-$adSearch = $this->get('gubler_ad_search.ad_search');
+```php
+/** @var ADSearchService */
+protected $adSearch;
 
-$users = $adSearch->search('user'); // get an array of ADUser objects for search term
+public function __construct(ADSearchService $adSearch)
+{
+    $this->adSearch = $adSearch;
+}
 
-$user = $adSearch->getUser('user'); // get a single ADUser with the supplied `samaccountname`
+public function search () {
+    // find all that match a search term
+    $arrayOfUsers = $this->adSearch->search('User');
+    
+    // find one by GUID
+    $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA2');
+    $singleUser = $this->adSearch->find($guid);
+    
+    // find one by search term
+    $singleUser = $this->adSearch->findBy('samaccountname', 'User');
+}
 ```
 
 ## Installation
 
 Installation with composer:
 
-``` json
-    ...
-    "require": {
-        ...
-        "gubler/ad-search-bundle": "0.1.*",
-        ...
-    },
-    ...
+```bash
+composer require gubler/ad-search-bundle
 ```
 
-Next, be sure to enable the bundle in your `app/AppKernel.php` file:
+Then register the bundle in your `config/bundles.php`:
 
-``` php
-public function registerBundles()
-{
-    return array(
-        // ...
-        new Gubler\ADSearchBundle\GublerADSearchBundle(),
-        // ...
-    );
-}
+```php
+return [
+    // ...
+    Gubler\AdSearchBundle\GublerAdSearch::class => ['all' => true],
+]
 ```
 
-## Configuration
+### Configuration
 
-To configure the bundle, you must set the AD Connection information and what search class to use.
+The ADSearchBundle supports either connecting to an LDAP server or using an array of test users (useful
+in development when you may not have access to an LDAP server).
 
-``` yaml
+#### LDAP Server Configuration 
+
+Create the file `config/packages/gubler_ad_search.yaml` and then add the following configuration:
+
+```yaml
 gubler_ad_search:
-    ad_username: ~
-    ad_password: ~
-    ad_host: ~
-    ad_base_dn: ~
-    ad_port: 3268
-    ad_search_class: Gubler\ADSearchBundle\Domain\Search\ArraySearch
+    connection_type: server
+    server_address: test_server
+    server_port: 3268
+    server_bind_user: testUser
+    server_bind_password: password
 ```
 
-### Connection Information
+**Note:** Be careful with the `server_address` and `server_port` settings. `server_host` should be a domain controller
+that is configured as a _Global Catalog_ so that you can find users across the entire AD forest. To search the Global
+Catalog, you have to connect to the Domain Controller on port 3268 (instead of the normal LDAP port of 389).
 
-All of the parameters except for `ad_search_class` define values for binding to and searching an
-Active Directory server.
-- `ad_username` and `ad_password` must be an account that can do the initial `ldap_bind()` to the server.
-- `ad_host` is the Active Directory server to bind to and then search.
-- `ad_base_dn` is where to the bundle will start searching within your AD forest.
-- `ad_port` is the port to connect to the `ad_host` on.
+#### Array of Test Users Configuration
 
-**Note:** Be careful with the `ldap_host` and `ldap_port` settings. `ldap_host` should be a domain controller that is
-configured as a _Global Catalog_ so that you can find users across the entire AD forest. To search the Global Catalog,
-you have to connect to the Domain Controller on port 3268 (instead of the normal LDAP port of 389).
+First you need to create a `test_users.json` file. ADSearchBundle can do this for you by running
+the command to create the file in `config/packages/dev`:
 
-### Search Class
+```bash
+bin/console ad-search:create-user-json
+```
 
-This bundle comes with two search classes:
+Create the file `config/packages/gubler_ad_search.yaml` and then add the following configuration:
 
-- **ArraySearch** searches against an array of test users and is good for automated tests and local development when you
-  do not have access to an actual AD server. You can extend this class and override the `testUsers` method if you want
-  to define your own test users.
-- **AbstractServerSearch** is an abstract class for searching against an actual AD server. You will need to create a
-  concrete class in your application that defines two methods (`chooseNameForAccount` and `dnToDomain`) whose
-  implementation will depend heavily on your actual AD layout and application needs. You can see an example
-  implementation in the Example directory.
-
-You can create any other types of search classes as long as they implement the
-`Gubler\ADSearchBundle\Domain\Search\ActiveDirectorySearch` interface.
-
-By default the Bundle uses the `ArraySearch` class. Once you have created a class for searching your Active Directory
-(either through extending the `AbstractServerSearch` class or implementing the `ActiveDirectorySearch` interface) you
-configure your application to use that class.
-
-### The LDAP Adapter Class
-
-This bundle abstracts LDAP interactions so that you can stub/mock the LDAP adapter when you need to test your
-Search Class. This bundle ships with two LDAP adapter classes:
-
-- **LdapArrayAdapter** (default) that is used with the default `ArraySearch` and never actually tries to
-  connect to LDAP.
-- **LdapAdapter** which is a more robust adapter that will try and connect to LDAP. This is designed to be used with
-  the `AbstractServerSearch` (specifically, your implementations of `AbstractServerSearch`).
-  
-If you need something more custom, you can also create your own adapter by implementing the `LdapAdapterInterfact` and
-set your LDAP adapter in your Symfony configuration (see below).
-
-### Where to put the configuration
-
-You _can_ put all of the configuration in `app/config/config.yml`, but that locks you into a single search class and
-connection information. That would also cause you to put your connection information into your version control system
-(which would be a bad thing).
-
-The better option is to add the connection information at the bottom your `app/config/parameters.yml.dist` file and then
-set the actual values per installation after the actual `parameters.yml` file is created. 
-
-``` yaml
+```yaml
 gubler_ad_search:
-    ad_username: ~
-    ad_password: ~
-    ad_host: ~
-    ad_base_dn: ~
-    ad_port: 3268
+    connection_type: array
+    array_test_users: '%kernel.project_dir%/config/packages/dev/test_users.json'
 ```
 
-Symfony's [per environment config files](http://symfony.com/doc/current/configuration/environments.html) allows you to
-load different search classes depending on environment. In your `config.yml` file you can load the search class to use
-in development (or do not define anything and use the default `ArraySearch` class that comes with the bundle).
+## Roadmap
 
-Then, in your `app/config/config_prod.yml` file you can define the class to use in production that searches your actual
-Active Directory instance:
+### Features
 
-``` yaml
-gubler_ad_search:
-    ad_search_class: Your\Search\Class
-    ldap_adapter_class: Gubler\ADSearchBundle\Domain\LdapAdapter\LdapAdapter (or Your\Ldap\Adapter\Class)
-```
+- Symfony Recipe to ease installation
+- Move config to environment variables
+
+### Documentation
+
+- Custom Search Adapters (implementing `ADSearchAdapterInterface`)
+- Custom LDAP Factories (implementing `LdapFactoryInterface`)
