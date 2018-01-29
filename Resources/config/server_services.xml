@@ -13,5 +13,6 @@
         <service id="gubler_ad_search.ad_search" class="Gubler\ADSearchBundle\Service\ADSearchService">
             <argument type="service" id="gubler_ad_search.search_adapter"/>
         </service>
+        <service id="Gubler\ADSearchBundle\Service\ADSearchService" alias="gubler_ad_search.ad_search" />
     </services>
 </container>
