@@ -4,7 +4,7 @@
         <service id="gubler_ad_search.ldap_factory" class="Gubler\ADSearchBundle\Model\Search\ActiveDirectory\LdapFactory">
             <argument>%gubler_ad_search.server_address%</argument>
             <argument>%gubler_ad_search.server_port%</argument>
-            <argument>%gubler_ad_search.server_bind_dn%</argument>
+            <argument>%gubler_ad_search.server_bind_user%</argument>
             <argument>%gubler_ad_search.server_bind_password%</argument>
         </service>
         <service id="gubler_ad_search.search_adapter" class="Gubler\ADSearchBundle\Model\Search\ActiveDirectory\ServerSearch">
