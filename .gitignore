@@ -1,1 +1,6 @@
-vendor
+/vendor/
+/build/
+phpunit.xml
+.php_cs.cache
+test.php
+LdapTest.php

@@ -1,54 +1,81 @@
-<?php
-
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Gubler\ADSearchBundle\Tests\DependencyInjection;
 
-use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use Gubler\ADSearchBundle\DependencyInjection\GublerADSearchExtension;
+use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 
 /**
- * Extension Test
- *
- * @package Gubler\ADSearchBundle\Tests\DependencyInjection
+ * GublerADSearchExtensionTest
  */
 class GublerADSearchExtensionTest extends AbstractExtensionTestCase
 {
     /**
-     * @test
+     * Load Array Config
      */
-    public function testAfterLoadingTheVersionParameterHasBeenSet()
+    public function loadArrayConfig()
     {
-        $this->load(
-            array(
-                'ad_username' => '',
-                'ad_password' => '',
-                'ad_host' => '',
-                'ad_port' => 3268,
-                'ad_base_dn' => '',
-                'ad_search_class' => 'Gubler\ADSearchBundle\Domain\Search\ArraySearch',
-            )
-        );
-
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_username', '');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_password', '');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_host', '');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_port', 3268);
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.ad_base_dn', '');
-        $this->assertContainerBuilderHasParameter(
-            'gubler_ad_search.ad_search_class',
-            'Gubler\ADSearchBundle\Domain\Search\ArraySearch'
-        );
-        $this->assertContainerBuilderHasParameter(
-            'gubler_ad_search.ldap_adapter_class',
-            'Gubler\ADSearchBundle\Domain\LdapAdapter\LdapArrayAdapter'
-        );
+        parent::load([
+            'connection_type' => 'array',
+            'array_test_users' => 'testUsers.json',
+        ]);
     }
 
     /**
-     * Get Container Extension
+     * Load Server Config
+     */
+    public function loadServerConfig()
+    {
+        parent::load([
+            'connection_type' => 'server',
+            'server_address' => 'test_server',
+            // 'server_port' => 3268,
+            'server_bind_user' => 'testUser',
+            'server_bind_password' => 'password',
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function correctParametersLoadedForServerConfig()
+    {
+        $this->loadServerConfig();
+
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.connection_type', 'server');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_port', 3268);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_user', 'testUser');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_password', 'password');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.array_test_users', null);
+    }
+
+    /**
+     * @test
+     */
+    public function correctParametersLoadedForArrayConfig()
+    {
+        $this->loadArrayConfig();
+
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.connection_type', 'array');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_port', 3268);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_user', null);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_password', null);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.array_test_users', 'testUsers.json');
+    }
+
+    /**
+     * Load the container extension
      *
      * @return array
      */
-    protected function getContainerExtensions()
+    protected function getContainerExtensions(): array
     {
         return array(
             new GublerADSearchExtension(),

@@ -1,7 +1,13 @@
-<?php
-/**
- * Bundle Config Loader
+<?php declare(strict_types = 1);
+/*
+ * This file is part of the GublerADSearchBundle
+ *
+ * (c) Daryl Gubler <daryl@dev88.co>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 namespace Gubler\ADSearchBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -9,7 +15,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Bundle Configuration
- * @package Gubler\ADSearchBundle\DependencyInjection
  */
 class Configuration implements ConfigurationInterface
 {
@@ -23,16 +28,35 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('ad_username')->defaultValue('')->end()
-                ->scalarNode('ad_password')->defaultValue('')->end()
-                ->scalarNode('ad_host')->defaultValue('')->end()
-                ->scalarNode('ad_port')->defaultValue(3268)->end()
-                ->scalarNode('ad_base_dn')->defaultValue('')->end()
-                ->scalarNode('ad_search_class')->defaultValue('Gubler\ADSearchBundle\Domain\Search\ArraySearch')->end()
-                ->scalarNode('ldap_adapter_class')->defaultValue('Gubler\ADSearchBundle\Domain\LdapAdapter\LdapArrayAdapter')->end()
-                ->variableNode('test_users')
-                    ->defaultValue(array())->end()
-            ->end();
+                ->enumNode('connection_type')
+                    ->values(array('array', 'server'))
+                    ->info('Only accepts `array` or `server`')
+                    ->defaultValue('array')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->scalarNode('array_test_users')
+                    ->info('Connection Type `array` only: path to test users JSON file')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('server_address')
+                    ->info('Connection Type `server` only: Address of Active Directory Server')
+                    ->defaultNull()
+                ->end()
+                ->integerNode('server_port')
+                    ->info('Connection Type `server` only: Port to connect to Active Directory on')
+                    ->defaultValue(3268)
+                ->end()
+                ->scalarNode('server_bind_user')
+                    ->info('Connection Type `server` only: Username to bind to AD with')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('server_bind_password')
+                    ->info('Connection Type `server` only: Password to bind to AD with')
+                    ->defaultNull()
+                ->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
