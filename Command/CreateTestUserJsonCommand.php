@@ -420,7 +420,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => $user['firstName'][0].$user['lastName'][0],
             ],
             'distinguishedName' => [
-                0 => 'CN='.$user['lastName'].'\\, '.$user['firstName'].',OU='.$user['dn_ou'].',DC=acme,DC=com',
+                0 => 'CN='.$user['lastName'].', '.$user['firstName'].',OU='.$user['dn_ou'].',DC=acme,DC=com',
             ],
             'instanceType' => [
                 0 => '4',
@@ -432,7 +432,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => '20180102160000.0Z',
             ],
             'displayName' => [
-                0 => $user['lastName'], $user['firstName'],
+                0 => $user['lastName'].', '.$user['firstName'],
             ],
             'uSNCreated' => [
                 0 => '1001',

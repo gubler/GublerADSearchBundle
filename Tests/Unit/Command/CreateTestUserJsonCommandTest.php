@@ -13,11 +13,16 @@ use Gubler\ADSearchBundle\Command\CreateTestUserJsonCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\VarDumper\VarDumper;
 
+/**
+ * Class CreateTestUserJsonCommandTest
+ */
 class CreateTestUserJsonCommandTest extends TestCase
 {
-    public function testExecute()
+    /**
+     * @test
+     */
+    public function CanExecuteCommand()
     {
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['outputPath' => './']);
@@ -28,7 +33,7 @@ class CreateTestUserJsonCommandTest extends TestCase
 
         $this->assertEquals('Admin, System', $testUsers[0]['cn'][0]);
 
-        unlink('./test_users.json');
+//        unlink('./test_users.json');
     }
 
     /**

@@ -2,19 +2,6 @@
 
 ## Needs
 
-- AD to User Adapter
-    - ADUser interface for user accounts
-        - Set AD information
-            - ADguid
-            - ADemail
-            - ADsamAccountName
-            - ADrecord
-        - getADGuid
-        - getADEmail (nullable)
-        - getADSamAccountName
-        - getADDomain (nullable)
-        - getADRecord
-    
 - Class for Searching AD
     - Abstract Class for determining Domain <- Interface?
         - Passed User's AD information
