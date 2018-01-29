@@ -33,7 +33,7 @@ class CreateTestUserJsonCommandTest extends TestCase
 
         $this->assertEquals('Admin, System', $testUsers[0]['cn'][0]);
 
-//        unlink('./test_users.json');
+        unlink('./test_users.json');
     }
 
     /**
