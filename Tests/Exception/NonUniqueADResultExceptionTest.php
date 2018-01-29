@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Gubler\ADSearchBundle\Tests\Unit\Exception;
+namespace Gubler\ADSearchBundle\Tests\Exception;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
 use PHPUnit\Framework\TestCase;
@@ -18,8 +18,10 @@ use PHPUnit\Framework\TestCase;
 class NonUniqueADResultExceptionTest extends TestCase
 {
     /**
-     * @expectedException     Gubler\ADSearchBundle\Exception\NonUniqueADResultException
+     * @expectedException \Gubler\ADSearchBundle\Exception\NonUniqueADResultException
+     *
      * @expectedExceptionCode 500
+     *
      * @expectedExceptionMessage Search returned multiple results. Should only return one result
      */
     public function testThrowsDefaultMessage()

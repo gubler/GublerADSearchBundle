@@ -1,7 +1,0 @@
-default:
-    autoload:
-        '': '%paths.base%/Tests/Acceptance/Contexts'
-    suites:
-        default:
-            paths:    [ '%paths.base%/Tests/Acceptance' ]
-            contexts: [ Gubler\ADSearchBundle\Tests\Acceptance\Contexts\FeatureContext ]

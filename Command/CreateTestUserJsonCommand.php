@@ -32,6 +32,12 @@ class CreateTestUserJsonCommand extends Command
         ;
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int|null|void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $outputPath = $input->getArgument('outputPath') ?? 'config/packages/dev';
@@ -456,7 +462,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => $user['address'],
             ],
             'name' => [
-                0 => $user['lastName'].', '.$user['firstName']
+                0 => $user['lastName'].', '.$user['firstName'],
             ],
             'objectGUID' => [
                 0 => $user['guid'],

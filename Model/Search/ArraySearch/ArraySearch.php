@@ -76,11 +76,12 @@ class ArraySearch implements ADSearchAdapterInterface
         $user = collect($this->testUsers)
             ->first(function (array $row) use ($byField, $term) {
                 $test = \is_array($row[$byField]) ? $row[$byField][0] : $row[$byField];
+
                 return strcasecmp($test, $term) === 0;
             })
         ;
 
-        if ($user === null) {
+        if (null === $user) {
             return null;
         }
 
@@ -102,7 +103,7 @@ class ArraySearch implements ADSearchAdapterInterface
             })
         ;
 
-        if ($user === null) {
+        if (null === $user) {
             return null;
         }
 

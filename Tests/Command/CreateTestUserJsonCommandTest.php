@@ -22,7 +22,7 @@ class CreateTestUserJsonCommandTest extends TestCase
     /**
      * @test
      */
-    public function CanExecuteCommand()
+    public function canExecuteCommand()
     {
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['outputPath' => './']);
