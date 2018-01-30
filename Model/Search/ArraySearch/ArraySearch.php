@@ -40,14 +40,15 @@ class ArraySearch implements ADSearchAdapterInterface
     {
         return collect($this->testUsers)
             ->filter(function (array $row) use ($term, $fields) {
+                $fields = array_map('strtolower', $fields);
+
                 // iterate through each field in the row
+                $row = array_change_key_case($row, CASE_LOWER);
                 foreach ($row as $field => $value) {
                     // check if field is in list of fields to search
                     if (\in_array($field, $fields, true) === false) {
                         continue;
                     }
-
-                    // if value is array, check the each value in the array
                     /** @var array $value */
                     foreach ($value as $test) {
                         if ($this->testTermInValue($term, $test)) {
@@ -75,9 +76,10 @@ class ArraySearch implements ADSearchAdapterInterface
     {
         $user = collect($this->testUsers)
             ->first(function (array $row) use ($byField, $term) {
-                $test = \is_array($row[$byField]) ? $row[$byField][0] : $row[$byField];
+                $row = array_change_key_case($row, CASE_LOWER);
+                $byField = strtolower($byField);
 
-                return strcasecmp($test, $term) === 0;
+                return strcasecmp($row[$byField][0], $term) === 0;
             })
         ;
 
