@@ -27,7 +27,7 @@ class ArraySearchTest extends TestCase
      */
     public function setUp()
     {
-        $this->search = new ArraySearch('./test_users.json');
+        $this->search = new ArraySearch(__DIR__.'/test_users.json');
     }
 
     /**
@@ -43,6 +43,7 @@ class ArraySearchTest extends TestCase
 
         $result = [];
         $found = $this->search->search('particle', ['displayName']);
+        $this->assertCount(3, $found);
         foreach ($found as $entry) {
             $this->assertInstanceOf(Entry::class, $entry);
             /** @var Entry $entry */
@@ -86,11 +87,11 @@ class ArraySearchTest extends TestCase
     {
         $expected = 'Particle, Proton';
 
-        $entry = $this->search->findOne('sAMAccountName', 'atomproton');
+        $entry = $this->search->findOne('samaccountname', 'atomproton');
         $this->assertInstanceOf(Entry::class, $entry);
         $this->assertEquals($expected, $entry->getAttribute('displayName')[0]);
 
-        $entry = $this->search->findOne('sAMAccountName', 'atompro');
+        $entry = $this->search->findOne('samaccountname', 'atompro');
         $this->assertNull($entry);
     }
 }
