@@ -50,6 +50,20 @@ return [
 The ADSearchBundle supports either connecting to an LDAP server or using an array of test users (useful
 in development when you may not have access to an LDAP server).
 
+#### Environment Variables
+
+Until a recipe has been created, copy the following to your `.env.dist` file:
+
+```dotenv
+###> gubler/ad-search-bundle ###
+AD_SEARCH_ARRAY_TEST_USERS='%kernel.project_dir%/config/packages/dev/test_users.json'
+AD_SEARCH_SERVER_ADDRESS=
+AD_SEARCH_SERVER_PORT=3268
+AD_SEARCH_BIND_USER=
+AD_SEARCH_BIND_PASSWORD=
+###< gubler/ad-search-bundle ###
+```
+
 #### LDAP Server Configuration 
 
 Create the file `config/packages/gubler_ad_search.yaml` and then add the following configuration:
@@ -57,13 +71,15 @@ Create the file `config/packages/gubler_ad_search.yaml` and then add the followi
 ```yaml
 gubler_ad_search:
     connection_type: server
-    server_address: test_server
-    server_port: 3268
-    server_bind_user: testUser
-    server_bind_password: password
+    config:
+        address: '%env(AD_SEARCH_SERVER_ADDRESS)%'
+        port: '%env(AD_SEARCH_SERVER_PORT)%'
+        bind_user: '%env(AD_SEARCH_BIND_USER)%'
+        bind_password: '%env(AD_SEARCH_BIND_PASSWORD)%'
+        test_users: ~
 ```
 
-**Note:** Be careful with the `server_address` and `server_port` settings. `server_host` should be a domain controller
+**Note:** Be careful with the `address` and `port` settings. `address` should be a domain controller
 that is configured as a _Global Catalog_ so that you can find users across the entire AD forest. To search the Global
 Catalog, you have to connect to the Domain Controller on port 3268 (instead of the normal LDAP port of 389).
 
@@ -71,6 +87,8 @@ Catalog, you have to connect to the Domain Controller on port 3268 (instead of t
 
 First you need to create a `test_users.json` file. ADSearchBundle can do this for you by running
 the command to create the file in `config/packages/dev`:
+
+**NOTE: THIS IS CURRENTLY NOT WORKING. COPY THE FILE FROM THE `Resources` DIRECTORY.
 
 ```bash
 bin/console ad-search:create-user-json
@@ -81,13 +99,25 @@ Create the file `config/packages/gubler_ad_search.yaml` and then add the followi
 ```yaml
 gubler_ad_search:
     connection_type: array
-    array_test_users: '%kernel.project_dir%/config/packages/dev/test_users.json'
+    config:
+        address: ~
+        port: ~
+        bind_user: ~
+        bind_password: ~
+        test_users: '%env(resolve:AD_SEARCH_ARRAY_TEST_USERS)%'
 ```
+
+#### Different Environments
+
+The common use is to add the _Server_ configuration to `config/packages/gubler_ad_search.yaml` and the _Array_
+configuration to `config/packages/dev/gubler_ad_search.yaml`. This will let you use Active Directory in `prod`
+and a test array in `dev`.
 
 ## Roadmap
 
 ### Features
 
+- Fix console command
 - Symfony Recipe to ease installation
 - Move config to environment variables
 
