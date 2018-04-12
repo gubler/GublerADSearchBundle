@@ -2,7 +2,7 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="gubler_ad_search.search_adapter" class="Gubler\ADSearchBundle\Model\Search\ArraySearch\ArraySearch">
-            <argument>%gubler_ad_search.array_test_users%</argument>
+            <argument>%gubler_ad_search.array.test_users%</argument>
         </service>
         <service id="gubler_ad_search.ad_search" class="Gubler\ADSearchBundle\Service\ADSearchService">
             <argument type="service" id="gubler_ad_search.search_adapter"/>

@@ -19,6 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CreateTestUserJsonCommand extends Command
 {
+    protected static $defaultName = 'ad-search:create-user-json';
+
     /**
      * Configure Command
      */
