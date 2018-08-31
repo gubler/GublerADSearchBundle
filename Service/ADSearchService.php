@@ -69,4 +69,14 @@ class ADSearchService
     {
         return $this->adapter->findOne('samaccountname', $sAMAccountName);
     }
+
+    /**
+     * @param string $sAMAccountName
+     *
+     * @return null|Entry
+     */
+    public function findByEmail(string $email): ?Entry
+    {
+        return $this->adapter->findOne('mail', $email);
+    }
 }
