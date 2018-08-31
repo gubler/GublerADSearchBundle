@@ -24,7 +24,9 @@ class GublerADSearchExtensionTest extends AbstractExtensionTestCase
     {
         parent::load([
             'connection_type' => 'array',
-            'array_test_users' => 'testUsers.json',
+            'config' => [
+                'test_users' => 'testUsers.json',
+            ],
         ]);
     }
 
@@ -35,10 +37,12 @@ class GublerADSearchExtensionTest extends AbstractExtensionTestCase
     {
         parent::load([
             'connection_type' => 'server',
-            'server_address' => 'test_server',
-            // 'server_port' => 3268,
-            'server_bind_user' => 'testUser',
-            'server_bind_password' => 'password',
+            'config' => [
+                'address' => 'test_server',
+                'port' => 3268,
+                'bind_user' => 'testUser',
+                'bind_password' => 'password',
+            ],
         ]);
     }
 
@@ -49,11 +53,9 @@ class GublerADSearchExtensionTest extends AbstractExtensionTestCase
     {
         $this->loadServerConfig();
 
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.connection_type', 'server');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_port', 3268);
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_user', 'testUser');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_password', 'password');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.array_test_users', null);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server.port', 3268);
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server.bind_user', 'testUser');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.server.bind_password', 'password');
     }
 
     /**
@@ -63,11 +65,7 @@ class GublerADSearchExtensionTest extends AbstractExtensionTestCase
     {
         $this->loadArrayConfig();
 
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.connection_type', 'array');
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_port', 3268);
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_user', null);
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.server_bind_password', null);
-        $this->assertContainerBuilderHasParameter('gubler_ad_search.array_test_users', 'testUsers.json');
+        $this->assertContainerBuilderHasParameter('gubler_ad_search.array.test_users', 'testUsers.json');
     }
 
     /**

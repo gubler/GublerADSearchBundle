@@ -11,6 +11,7 @@
 namespace Gubler\ADSearchBundle\Model\Search\ArraySearch;
 
 use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
+use Gubler\Collection\Collection;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 
@@ -38,7 +39,7 @@ class ArraySearch implements ADSearchAdapterInterface
      */
     public function search(string $term, array $fields): array
     {
-        return collect($this->testUsers)
+        return Collection::from($this->testUsers)
             ->filter(function (array $row) use ($term, $fields) {
                 $fields = array_map('strtolower', $fields);
 
@@ -74,7 +75,7 @@ class ArraySearch implements ADSearchAdapterInterface
      */
     public function findOne(string $byField, string $term): ?Entry
     {
-        $user = collect($this->testUsers)
+        $user = Collection::from($this->testUsers)
             ->first(function (array $row) use ($byField, $term) {
                 $row = array_change_key_case($row, CASE_LOWER);
                 $byField = strtolower($byField);
@@ -99,7 +100,7 @@ class ArraySearch implements ADSearchAdapterInterface
     {
         $guidString = $guid->toString();
 
-        $user = collect($this->testUsers)
+        $user = Collection::from($this->testUsers)
             ->first(function (array $row) use ($guidString) {
                 return strcasecmp($row['objectGUID'][0], $guidString) === 0;
             })
