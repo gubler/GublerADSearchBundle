@@ -28,6 +28,10 @@ class ArraySearch implements ADSearchAdapterInterface
     public function __construct(string $pathToTestUsersJson)
     {
         $this->testUsers = json_decode(file_get_contents($pathToTestUsersJson), true);
+        // decode utf8 GUIDs to binary to be the same as AD
+        foreach ($this->testUsers as $key => $user) {
+            $this->testUsers[$key]['objectGUID'][0] = utf8_decode($user['objectGUID'][0]);
+        }
     }
 
     /**

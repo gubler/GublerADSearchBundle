@@ -13,6 +13,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Gubler\ADSearchBundle\Lib\ADGuid;
+use Ramsey\Uuid\Codec\GuidStringCodec;
+use Ramsey\Uuid\Builder\DefaultUuidBuilder;
+use Ramsey\Uuid\Converter\Number\BigNumberConverter;
+
 
 /**
  * Class CreateTestUserJsonCommand
@@ -51,7 +56,7 @@ class CreateTestUserJsonCommand extends Command
 
         // write user array to json file
         $path = $outputPath.'/test_users.json';
-        file_put_contents($path, json_encode($ldapUsers));
+        file_put_contents($path, json_encode($ldapUsers, JSON_PRETTY_PRINT));
 
         $output->writeln('File Generated at: '.$path);
     }
@@ -387,6 +392,10 @@ class CreateTestUserJsonCommand extends Command
      */
     protected function createLdapData(array $user): array
     {
+        $adGuid = ADGuid::fromString($user['guid']);
+        $codec = new GuidStringCodec(new DefaultUuidBuilder(new BigNumberConverter()));
+        $adGuidBytes = $codec->encodeBinary($adGuid);
+
         return [
             'objectClass' => [
                 0 => 'top',
@@ -467,7 +476,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => $user['lastName'].', '.$user['firstName'],
             ],
             'objectGUID' => [
-                0 => $user['guid'],
+                0 => utf8_encode($adGuidBytes),
             ],
             'userAccountControl' => [
                 0 => '111222',
