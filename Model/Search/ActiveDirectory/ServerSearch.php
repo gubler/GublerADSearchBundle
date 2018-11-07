@@ -48,7 +48,7 @@ class ServerSearch implements ADSearchAdapterInterface
         return $this->ldap
             ->query(
                 '',
-                $this->buildSearchFilter($escapedTerm, $fields)
+                $this->buildSearchFilter($escapedTerm, $fields, false)
             )
             ->execute()
             ->toArray()
@@ -69,7 +69,7 @@ class ServerSearch implements ADSearchAdapterInterface
 
         $results = $this->ldap->query(
             '',
-            $this->buildSearchFilter($escapedTerm, [$byField])
+            $this->buildSearchFilter($escapedTerm, [$byField], true)
         )->execute();
 
         if (empty($results)) {
@@ -94,7 +94,7 @@ class ServerSearch implements ADSearchAdapterInterface
     {
         $results = $this->ldap->query(
             '',
-            $this->buildSearchFilter($this->uuidToGuidHex($guid), ['objectGUID'])
+            $this->buildSearchFilter($this->uuidToGuidHex($guid), ['objectGUID'], true)
         )->execute();
 
         if (empty($results)) {
@@ -114,12 +114,14 @@ class ServerSearch implements ADSearchAdapterInterface
      *
      * @return string
      */
-    protected function buildSearchFilter(string $name, array $fields): string
+    protected function buildSearchFilter(string $name, array $fields, bool $strict): string
     {
         $filter = '';
 
+        $searchName = $strict ? $name : $name.'*';
+
         foreach ($fields as $field) {
-            $filter = $filter.'('.$field.'='.$name.'*)';
+            $filter = $filter.'('.$field.'='.$searchName.')';
         }
 
         $filter = '(|'.$filter.')';
