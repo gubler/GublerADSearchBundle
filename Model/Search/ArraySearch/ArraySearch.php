@@ -102,20 +102,23 @@ class ArraySearch implements ADSearchAdapterInterface
      */
     public function find(UuidInterface $guid): ?Entry
     {
-        $guidString = $guid->toString();
+        $users = array_filter($this->testUsers, function(array $entry) use ($guid) {
+            return bin2hex($entry['objectGUID'][0]) === $this->uuidToGuidHex($guid);
+        });
 
-        $user = Collection::from($this->testUsers)
-            ->first(function (array $row) use ($guidString) {
-                return strcasecmp($row['objectGUID'][0], $guidString) === 0;
-            })
-        ;
+        if (count($users) > 1) {
+            throw new \Exception('Too Many Users Found');
+        }
 
-        if (null === $user) {
+        if (count($users) === 0) {
             return null;
         }
 
+        $user = current($users);
+
         return new Entry($user['distinguishedName'][0], $user);
     }
+
 
     /**
      * @param string $term
@@ -126,5 +129,24 @@ class ArraySearch implements ADSearchAdapterInterface
     protected function testTermInValue(string $term, string $value): bool
     {
         return 0 === stripos($value, $term);
+    }
+
+    /**
+     * Differs from uuidtoGuidHex in ServerSearch because each character is not prefaced with `\\`.
+     *
+     * @param UuidInterface $uuid
+     *
+     * @return string
+     */
+    protected function uuidToGuidHex(UuidInterface $uuid): string
+    {
+        $guid = $uuid->getBytes();
+        $guidHex = '';
+        $length = \strlen($guid);
+        for ($i = 0; $i < $length; ++$i) {
+            $guidHex .= str_pad(dechex(\ord($guid[$i])), 2, '0', STR_PAD_LEFT);
+        }
+
+        return $guidHex;
     }
 }
