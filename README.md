@@ -2,8 +2,6 @@
 
 This is a Symfony 4 bundle to make searching Active Directory (or other LDAP directories) easier.
 
-This will also work with Symfony 3.4 if you are running PHP >= 7.1.3.
-
 ## Example
 
 ```php
