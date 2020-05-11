@@ -17,9 +17,9 @@
         "php": ">=7.1.3",
         "gubler/collection": "^1.0",
         "ramsey/uuid": "^3.7",
-        "symfony/ldap": "^3.4|^4.0",
-        "symfony/http-kernel": "^3.4|^4.0",
-        "symfony/console": "^3.4|^4.0"
+        "symfony/ldap": "^4.4|^5.0",
+        "symfony/http-kernel": "^4.4|^5.0",
+        "symfony/console": "^4.4|^5.0"
     },
     "require-dev": {
         "escapestudios/symfony2-coding-standard": "^3.0",
