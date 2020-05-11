@@ -14,15 +14,12 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * Class CreateTestUserJsonCommandTest
- */
 class CreateTestUserJsonCommandTest extends TestCase
 {
     /**
      * @test
      */
-    public function canExecuteCommand()
+    public function canExecuteCommand(): void
     {
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['outputPath' => './']);

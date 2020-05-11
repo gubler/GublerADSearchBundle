@@ -27,7 +27,7 @@ class ADUserTest extends TestCase
     /**
      * Create LDAP Entry for testing
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->uuid = Uuid::fromString('ea2e7d5e-beea-472b-8105-11e762733a34');
         $this->ldapEntry = new Entry(
@@ -79,7 +79,7 @@ class ADUserTest extends TestCase
     /**
      * @test
      */
-    public function canCreateUser()
+    public function canCreateUser(): void
     {
         $user = new ADUser($this->ldapEntry);
 

@@ -13,19 +13,14 @@ use Gubler\ADSearchBundle\Model\Search\ArraySearch\ArraySearch;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Ldap\Entry;
+use Symfony\Component\VarDumper\VarDumper;
 
-/**
- * Class ArraySearchTest
- */
 class ArraySearchTest extends TestCase
 {
     /** @var ArraySearch */
     protected $search;
 
-    /**
-     * Set Up Tests
-     */
-    public function setUp()
+    public function setUp(): void
     {
         $this->search = new ArraySearch(__DIR__.'/test_users.json');
     }
@@ -33,7 +28,7 @@ class ArraySearchTest extends TestCase
     /**
      * @test
      */
-    public function canSearchForUsers()
+    public function canSearchForUsers(): void
     {
         $expected = [
             'Particle, Proton',
@@ -46,10 +41,9 @@ class ArraySearchTest extends TestCase
         $this->assertCount(3, $found);
         foreach ($found as $entry) {
             $this->assertInstanceOf(Entry::class, $entry);
-            /** @var Entry $entry */
             $displayName = $entry->getAttribute('displayName')[0];
             $result[] = $displayName;
-            $this->assertTrue(\in_array($displayName, $expected, true));
+            $this->assertContains($displayName, $expected);
         }
 
         $this->assertCount(3, $result);
@@ -58,7 +52,7 @@ class ArraySearchTest extends TestCase
     /**
      * @test
      */
-    public function canFindUserByGuid()
+    public function canFindUserByGuid(): void
     {
         $expected = 'Particle, Proton';
 
@@ -73,7 +67,7 @@ class ArraySearchTest extends TestCase
     /**
      * @test
      */
-    public function findCanReturnNull()
+    public function findCanReturnNull(): void
     {
         $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA2');
         $entry = $this->search->find($guid);
@@ -83,7 +77,7 @@ class ArraySearchTest extends TestCase
     /**
      * @test
      */
-    public function canFindUserByField()
+    public function canFindUserByField(): void
     {
         $expected = 'Particle, Proton';
 

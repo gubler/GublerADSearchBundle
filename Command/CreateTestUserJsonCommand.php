@@ -9,6 +9,12 @@
  */
 namespace Gubler\ADSearchBundle\Command;
 
+use Ramsey\Uuid\Converter\Number\GenericNumberConverter;
+use Ramsey\Uuid\Converter\Time\GenericTimeConverter;
+use Ramsey\Uuid\Guid\Guid;
+use Ramsey\Uuid\Math\BrickMathCalculator;
+use Ramsey\Uuid\Rfc4122\UuidBuilder;
+use Ramsey\Uuid\UuidFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -59,6 +65,8 @@ class CreateTestUserJsonCommand extends Command
         file_put_contents($path, json_encode($ldapUsers, JSON_PRETTY_PRINT));
 
         $output->writeln('File Generated at: '.$path);
+
+        return 0;
     }
 
     /**
@@ -393,7 +401,8 @@ class CreateTestUserJsonCommand extends Command
     protected function createLdapData(array $user): array
     {
         $adGuid = ADGuid::fromString($user['guid']);
-        $codec = new GuidStringCodec(new DefaultUuidBuilder(new BigNumberConverter()));
+        $factory = new UuidFactory();
+        $codec = new GuidStringCodec($factory->getUuidBuilder());
         $adGuidBytes = $codec->encodeBinary($adGuid);
 
         return [

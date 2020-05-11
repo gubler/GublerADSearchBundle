@@ -17,15 +17,13 @@ use PHPUnit\Framework\TestCase;
  */
 class NonUniqueADResultExceptionTest extends TestCase
 {
-    /**
-     * @expectedException \Gubler\ADSearchBundle\Exception\NonUniqueADResultException
-     *
-     * @expectedExceptionCode 500
-     *
-     * @expectedExceptionMessage Search returned multiple results. Should only return one result
-     */
-    public function testThrowsDefaultMessage()
+    public function testThrowsDefaultMessage(): void
     {
+        $this->expectException(NonUniqueADResultException::class);
+        $this->expectExceptionMessage('Search returned multiple results. Should only return one result');
+        $this->expectExceptionCode(500);
+
         throw new NonUniqueADResultException();
+
     }
 }

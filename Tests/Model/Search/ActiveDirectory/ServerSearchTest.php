@@ -9,6 +9,7 @@
  */
 namespace Gubler\ADSearchBundle\Test\Model\Search\ActiveDirectory;
 
+use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
 use Gubler\ADSearchBundle\Model\Search\ActiveDirectory\LdapFactory;
 use Gubler\ADSearchBundle\Model\Search\ActiveDirectory\ServerSearch;
 use PHPUnit\Framework\TestCase;
@@ -33,10 +34,7 @@ class ServerSearchTest extends TestCase
     /** @var Ldap */
     protected $ldap;
 
-    /**
-     * Test Set Up
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->query = $this->getMockBuilder(QueryInterface::class)->getMock();
         $this->adapter = $this->getMockBuilder(AdapterInterface::class)->getMock();
@@ -55,7 +53,7 @@ class ServerSearchTest extends TestCase
     /**
      * @test
      */
-    public function canSearchForUsers()
+    public function canSearchForUsers(): void
     {
         $this->query
             ->expects($this->once())
@@ -75,7 +73,7 @@ class ServerSearchTest extends TestCase
             /** @var Entry $entry */
             $displayName = $entry->getAttribute('displayName')[0];
             $result[] = $displayName;
-            $this->assertTrue(\in_array($displayName, $expected, true));
+            $this->assertContains($displayName, $expected);
         }
 
         $this->assertCount(2, $result);
@@ -84,7 +82,7 @@ class ServerSearchTest extends TestCase
     /**
      * @test
      */
-    public function canFindUserByGuid()
+    public function canFindUserByGuid(): void
     {
         $this->query
             ->expects($this->once())
@@ -103,7 +101,7 @@ class ServerSearchTest extends TestCase
     /**
      * @test
      */
-    public function findCanReturnNull()
+    public function findCanReturnNull(): void
     {
         $this->query
             ->expects($this->once())
@@ -119,11 +117,11 @@ class ServerSearchTest extends TestCase
 
     /**
      * @test
-     *
-     * @expectedException \Gubler\ADSearchBundle\Exception\NonUniqueADResultException
      */
-    public function throwsNonUniqueErrorIfFindMethodFindsMultipleUsers()
+    public function throwsNonUniqueErrorIfFindMethodFindsMultipleUsers(): void
     {
+        $this->expectException(NonUniqueADResultException::class);
+
         $this->query
             ->expects($this->once())
             ->method('execute')
@@ -137,7 +135,7 @@ class ServerSearchTest extends TestCase
     /**
      * @test
      */
-    public function canFindUserByField()
+    public function canFindUserByField(): void
     {
         $this->query
             ->expects($this->once())
@@ -156,7 +154,7 @@ class ServerSearchTest extends TestCase
     /**
      * @test
      */
-    public function findByCanReturnNull()
+    public function findByCanReturnNull(): void
     {
         $this->query
             ->expects($this->once())
@@ -170,11 +168,11 @@ class ServerSearchTest extends TestCase
 
     /**
      * @test
-     *
-     * @expectedException \Gubler\ADSearchBundle\Exception\NonUniqueADResultException
      */
-    public function throwsNonUniqueErrorIfFindByFindsMultipleUsers()
+    public function throwsNonUniqueErrorIfFindByFindsMultipleUsers(): void
     {
+        $this->expectException(NonUniqueADResultException::class);
+
         $this->query
             ->expects($this->once())
             ->method('execute')
