@@ -1,6 +1,10 @@
 # GublerADSearchBundle
 
-This is a Symfony 4 bundle to make searching Active Directory (or other LDAP directories) easier.
+This is a Symfony 5 bundle to make searching Active Directory (or other LDAP directories) easier.
+
+**Note:** If you want to use this in Symfony 4, use the 1.2 release branch.
+
+**DO NOT USE THE 1.3 Release, it is very broken**.
 
 ## Example
 
@@ -15,7 +19,7 @@ public function __construct(ADSearchService $adSearch)
 
 public function search () {
     // find all that match a search term
-    $arrayOfUsers = $this->adSearch->search('User');
+    $arrayOfUsers = $this->adSearch->search('name');
     
     // find one by GUID
     $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA2');
@@ -45,12 +49,11 @@ return [
 
 ### Configuration
 
-The ADSearchBundle supports either connecting to an LDAP server or using an array of test users (useful
-in development when you may not have access to an LDAP server).
+The ADSearchBundle supports either connecting to an LDAP server or using an array of test users (useful in development when you may not have access to an LDAP server).
 
 #### Environment Variables
 
-Until a recipe has been created, copy the following to your `.env.dist` file:
+Until a recipe has been created, copy the following to your `.env` file:
 
 ```dotenv
 ###> gubler/ad-search-bundle ###
@@ -77,22 +80,17 @@ gubler_ad_search:
         test_users: ~
 ```
 
-**Note:** Be careful with the `address` and `port` settings. `address` should be a domain controller
-that is configured as a _Global Catalog_ so that you can find users across the entire AD forest. To search the Global
-Catalog, you have to connect to the Domain Controller on port 3268 (instead of the normal LDAP port of 389).
+**Note:** Be careful with the `address` and `port` settings. `address` should be a domain controller that is configured as a _Global Catalog_ so that you can find users across the entire AD forest. To search the Global Catalog, you have to connect to the Domain Controller on port 3268 (instead of the normal LDAP port of 389).
 
 #### Array of Test Users Configuration
 
-First you need to create a `test_users.json` file. ADSearchBundle can do this for you by running
-the command to create the file in `config/packages/dev`:
-
-**NOTE: THIS IS CURRENTLY NOT WORKING. COPY THE FILE FROM THE `Resources` DIRECTORY.
+First you need to create a `test_users.json` file. ADSearchBundle can do this for you by running the command to create the file in `config/packages/dev`:
 
 ```bash
 bin/console ad-search:create-user-json
 ```
 
-Create the file `config/packages/gubler_ad_search.yaml` and then add the following configuration:
+Create the file `config/packages/dev/gubler_ad_search.yaml` and then add the following configuration:
 
 ```yaml
 gubler_ad_search:
@@ -107,15 +105,12 @@ gubler_ad_search:
 
 #### Different Environments
 
-The common use is to add the _Server_ configuration to `config/packages/gubler_ad_search.yaml` and the _Array_
-configuration to `config/packages/dev/gubler_ad_search.yaml`. This will let you use Active Directory in `prod`
-and a test array in `dev`.
+The common use is to add the _Server_ configuration to `config/packages/gubler_ad_search.yaml` and the _Array_ configuration to `config/packages/dev/gubler_ad_search.yaml`. This will let you use Active Directory in `prod` and a test array in `dev`.
 
 ## Roadmap
 
 ### Features
 
-- Fix console command
 - Symfony Recipe to ease installation
 - Move config to environment variables
 

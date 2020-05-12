@@ -52,12 +52,27 @@ class ArraySearchTest extends TestCase
     /**
      * @test
      */
-    public function canFindUserByGuid(): void
+    public function canFindUserByGuidString(): void
     {
         $expected = 'Particle, Proton';
 
         $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
 
+        $entry = $this->search->find($guid);
+
+        $this->assertInstanceOf(Entry::class, $entry);
+        $this->assertEquals($expected, $entry->getAttribute('displayName')[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function canFindUserByGuidBytes(): void
+    {
+        $expected = 'Particle, Proton';
+
+        $bytes = hex2bin('192D7590603643589239BEA350285CA1');
+        $guid = Uuid::fromBytes($bytes);
         $entry = $this->search->find($guid);
 
         $this->assertInstanceOf(Entry::class, $entry);
