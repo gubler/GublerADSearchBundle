@@ -12,9 +12,6 @@ namespace Gubler\ADSearchBundle\Exception;
 
 use \Throwable;
 
-/**
- * Class NonUniqueADResultException
- */
 class NonUniqueADResultException extends \Exception
 {
     /**

@@ -15,11 +15,7 @@ use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Ldap;
-use Symfony\Component\VarDumper\VarDumper;
 
-/**
- * Class ServerSearch
- */
 class ServerSearch implements ADSearchAdapterInterface
 {
     /**

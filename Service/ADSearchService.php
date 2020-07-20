@@ -14,9 +14,6 @@ use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 
-/**
- * Class ADSearchService
- */
 class ADSearchService
 {
     public const DEFAULT_SEARCH_FIELDS = [

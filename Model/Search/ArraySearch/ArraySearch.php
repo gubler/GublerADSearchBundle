@@ -12,18 +12,11 @@ namespace Gubler\ADSearchBundle\Model\Search\ArraySearch;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
 use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
-use Gubler\Collection\Collection;
-use Ramsey\Uuid\Codec\GuidStringCodec;
-use Ramsey\Uuid\Guid\Guid;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidFactory;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\VarDumper\VarDumper;
 
-/**
- * Class ArraySearch
- */
 class ArraySearch implements ADSearchAdapterInterface
 {
     /** @var array */

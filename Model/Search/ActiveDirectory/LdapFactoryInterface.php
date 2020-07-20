@@ -12,9 +12,6 @@ namespace Gubler\ADSearchBundle\Model\Search\ActiveDirectory;
 
 use Symfony\Component\Ldap\Ldap;
 
-/**
- * Interface LdapFactoryInterface
- */
 interface LdapFactoryInterface
 {
     /**

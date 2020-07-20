@@ -13,9 +13,6 @@ namespace Gubler\ADSearchBundle\Model\Search;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 
-/**
- * Interface ADSearchAdapterInterface
- */
 interface ADSearchAdapterInterface
 {
     /**

@@ -14,9 +14,6 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 
-/**
- * Interface ADUserInterface
- */
 class ADUser implements ADUserInterface
 {
     /** @var UuidInterface */
