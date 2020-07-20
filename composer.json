@@ -16,7 +16,6 @@
     "require": {
         "php": ">=7.2",
         "ext-json": "*",
-        "gubler/collection": "^1.0",
         "ramsey/uuid": "^4.0",
         "symfony/ldap": "^5.0",
         "symfony/http-kernel": "^5.0",

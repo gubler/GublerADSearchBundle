@@ -42,32 +42,30 @@ class ArraySearch implements ADSearchAdapterInterface
      */
     public function search(string $term, array $fields): array
     {
-        return Collection::from($this->testUsers)
-            ->filter(function (array $row) use ($term, $fields) {
-                $fields = array_map('strtolower', $fields);
+        $filteredUsers = array_filter($this->testUsers, function (array $row) use ($term, $fields) {
+            $fields = array_map('strtolower', $fields);
 
-                // iterate through each field in the row
-                $row = array_change_key_case($row, CASE_LOWER);
-                foreach ($row as $field => $value) {
-                    // check if field is in list of fields to search
-                    if (\in_array($field, $fields, true) === false) {
-                        continue;
-                    }
-                    /** @var array $value */
-                    foreach ($value as $test) {
-                        if ($this->testTermInValue($term, $test)) {
-                            return true;
-                        }
+            // iterate through each field in the row
+            $row = array_change_key_case($row, CASE_LOWER);
+            foreach ($row as $field => $value) {
+                // check if field is in list of fields to search
+                if (\in_array($field, $fields, true) === false) {
+                    continue;
+                }
+                /** @var array $value */
+                foreach ($value as $test) {
+                    if ($this->testTermInValue($term, $test)) {
+                        return true;
                     }
                 }
+            }
 
-                return false;
-            })
-            ->map(function (array $row) {
-                return new Entry($row['distinguishedName'][0], $row);
-            })
-            ->toArray()
-        ;
+            return false;
+        });
+
+        return array_map(function (array $row) {
+            return new Entry($row['distinguishedName'][0], $row);
+        }, $filteredUsers);
     }
 
     /**
@@ -78,18 +76,24 @@ class ArraySearch implements ADSearchAdapterInterface
      */
     public function findOne(string $byField, string $term): ?Entry
     {
-        $user = Collection::from($this->testUsers)
-            ->first(function (array $row) use ($byField, $term) {
+        $users = array_filter(
+            $this->testUsers,
+            function (array $row) use ($byField, $term) {
                 $row = array_change_key_case($row, CASE_LOWER);
                 $byField = strtolower($byField);
 
                 return strcasecmp($row[$byField][0], $term) === 0;
-            })
-        ;
+            }
+        );
 
-        if (null === $user) {
+        $users = array_values($users);
+
+
+        if (1 !== count($users)) {
             return null;
         }
+
+        $user = $users[0];
 
         return new Entry($user['distinguishedName'][0], $user);
     }
