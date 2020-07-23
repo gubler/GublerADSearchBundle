@@ -11,11 +11,10 @@
 namespace Gubler\ADSearchBundle\Model\Search\ArraySearch;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
+use Gubler\ADSearchBundle\Lib\GuidTools;
 use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
+use Ramsey\Uuid\Guid\Guid;
 use Symfony\Component\Ldap\Entry;
-use Symfony\Component\VarDumper\VarDumper;
 
 class ArraySearch implements ADSearchAdapterInterface
 {
@@ -99,14 +98,14 @@ class ArraySearch implements ADSearchAdapterInterface
     }
 
     /**
-     * @param UuidInterface $guid
+     * @param Guid $guid
      *
      * @return null|Entry
      */
-    public function find(UuidInterface $guid): ?Entry
+    public function find(Guid $guid): ?Entry
     {
         $users = array_filter($this->testUsers, function(array $entry) use ($guid) {
-            $arrayGuid = Uuid::fromBytes($entry['objectGUID'][0]);
+            $arrayGuid = GuidTools::convertBytesToGuid($entry['objectGUID'][0]);
 
             return $arrayGuid->equals($guid);
         });
@@ -134,24 +133,5 @@ class ArraySearch implements ADSearchAdapterInterface
     protected function testTermInValue(string $term, string $value): bool
     {
         return 0 === stripos($value, $term);
-    }
-
-    /**
-     * Differs from uuidtoGuidHex in ServerSearch because each character is not prefaced with `\\`.
-     *
-     * @param UuidInterface $uuid
-     *
-     * @return string
-     */
-    protected function uuidToGuidHex(UuidInterface $uuid): string
-    {
-        $guid = $uuid->getBytes();
-        $guidHex = '';
-        $length = \strlen($guid);
-        for ($i = 0; $i < $length; ++$i) {
-            $guidHex .= str_pad(dechex(\ord($guid[$i])), 2, '0', STR_PAD_LEFT);
-        }
-
-        return $guidHex;
     }
 }

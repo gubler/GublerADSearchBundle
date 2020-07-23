@@ -10,10 +10,10 @@
 namespace Gubler\ADSearchBundle\Test\Model\Search\ActiveDirectory;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
+use Gubler\ADSearchBundle\Lib\GuidTools;
 use Gubler\ADSearchBundle\Model\Search\ActiveDirectory\LdapFactory;
 use Gubler\ADSearchBundle\Model\Search\ActiveDirectory\ServerSearch;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Adapter\ExtLdap\Collection;
 use Symfony\Component\Ldap\Adapter\QueryInterface;
@@ -92,7 +92,7 @@ class ServerSearchTest extends TestCase
         ;
 
         $expected = 'Particle, Proton';
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
         $entry = $this->search->find($guid);
         $this->assertInstanceOf(Entry::class, $entry);
         $this->assertEquals($expected, $entry->getAttribute('displayName')[0]);
@@ -110,7 +110,7 @@ class ServerSearchTest extends TestCase
             ->willReturn([])
         ;
 
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
         $entry = $this->search->find($guid);
         $this->assertNull($entry);
     }
@@ -128,7 +128,7 @@ class ServerSearchTest extends TestCase
             ->willReturn($this->ldapReturnEntries())
         ;
 
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
         $this->search->find($guid);
     }
 

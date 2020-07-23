@@ -11,7 +11,7 @@
 namespace Gubler\ADSearchBundle\Service;
 
 use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
-use Ramsey\Uuid\UuidInterface;
+use Ramsey\Uuid\Guid\Guid;
 use Symfony\Component\Ldap\Entry;
 
 class ADSearchService
@@ -48,11 +48,11 @@ class ADSearchService
     }
 
     /**
-     * @param UuidInterface $guid
+     * @param Guid $guid
      *
      * @return null|Entry
      */
-    public function find(UuidInterface $guid): ?Entry
+    public function find(Guid $guid): ?Entry
     {
         return $this->adapter->find($guid);
     }
@@ -68,7 +68,7 @@ class ADSearchService
     }
 
     /**
-     * @param string $sAMAccountName
+     * @param string $email
      *
      * @return null|Entry
      */

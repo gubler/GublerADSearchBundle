@@ -9,6 +9,7 @@
  */
 namespace Gubler\ADSearchBundle\Test\Model\Search\ArraySearch;
 
+use Gubler\ADSearchBundle\Lib\GuidTools;
 use Gubler\ADSearchBundle\Model\Search\ArraySearch\ArraySearch;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
@@ -56,7 +57,7 @@ class ArraySearchTest extends TestCase
     {
         $expected = 'Particle, Proton';
 
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
 
         $entry = $this->search->find($guid);
 
@@ -71,8 +72,9 @@ class ArraySearchTest extends TestCase
     {
         $expected = 'Particle, Proton';
 
-        $bytes = hex2bin('192D7590603643589239BEA350285CA1');
-        $guid = Uuid::fromBytes($bytes);
+        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
+        $bytes = $guid->getBytes();
+        $guid = GuidTools::convertBytestoGuid($bytes);
         $entry = $this->search->find($guid);
 
         $this->assertInstanceOf(Entry::class, $entry);
@@ -84,7 +86,7 @@ class ArraySearchTest extends TestCase
      */
     public function findCanReturnNull(): void
     {
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA2');
+        $guid = GuidTools::convertStringtoGuid('192D7591-6036-4358-9239-BEA350285CA1');
         $entry = $this->search->find($guid);
         $this->assertNull($entry);
     }

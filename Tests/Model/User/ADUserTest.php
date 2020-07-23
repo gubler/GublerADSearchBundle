@@ -9,8 +9,10 @@
  */
 namespace Gubler\ADSearchBundle\Tests\Model\User;
 
+use Gubler\ADSearchBundle\Lib\GuidTools;
 use Gubler\ADSearchBundle\Model\User\ADUser;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Guid\Guid;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Ldap\Entry;
 
@@ -21,15 +23,15 @@ class ADUserTest extends TestCase
 {
     /** @var Entry */
     protected $ldapEntry;
-    /** @var Uuid */
-    protected $uuid;
+    /** @var Guid */
+    protected $guid;
 
     /**
      * Create LDAP Entry for testing
      */
     public function setUp(): void
     {
-        $this->uuid = Uuid::fromString('ea2e7d5e-beea-472b-8105-11e762733a34');
+        $this->guid = GuidTools::convertStringtoGuid('ea2e7d5e-beea-472b-8105-11e762733a34');
         $this->ldapEntry = new Entry(
             'CN=Appleseed\, Jenny A.,OU=Sowers,DC=appleseedorchards',
             [
@@ -60,7 +62,7 @@ class ADUserTest extends TestCase
                 'streetAddress' => ['123 Orchards Lane'],
                 'mailNickname' => ['appleseedj1'],
                 'name' => ['Appleseed, Jenny A.'],
-                'objectGUID' => [$this->uuid->getBytes()],
+                'objectGUID' => [$this->guid->getBytes()],
                 'userAccountControl' => ['111222'],
                 'pwdLastSet' => ['131145256860505663'],
                 'primaryGroupID' => ['5521'],

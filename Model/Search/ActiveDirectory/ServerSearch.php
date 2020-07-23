@@ -12,7 +12,8 @@ namespace Gubler\ADSearchBundle\Model\Search\ActiveDirectory;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
 use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
-use Ramsey\Uuid\UuidInterface;
+use Gubler\ADSearchBundle\Lib\GuidTools;
+use Ramsey\Uuid\Guid\Guid;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Ldap;
 
@@ -48,7 +49,7 @@ class ServerSearch implements ADSearchAdapterInterface
             )
             ->execute()
             ->toArray()
-        ;
+            ;
     }
 
     /**
@@ -80,17 +81,17 @@ class ServerSearch implements ADSearchAdapterInterface
     }
 
     /**
-     * @param UuidInterface $guid
+     * @param Guid $guid
      *
      * @return null|Entry
      *
      * @throws NonUniqueADResultException
      */
-    public function find(UuidInterface $guid): ?Entry
+    public function find(Guid $guid): ?Entry
     {
         $results = $this->ldap->query(
             '',
-            $this->buildSearchFilter($this->uuidToGuidHex($guid), ['objectGUID'], true)
+            $this->buildSearchFilter(GuidTools::guidToADHex($guid), ['objectGUID'], true)
         )->execute();
 
         if (empty($results)) {
@@ -117,17 +118,15 @@ class ServerSearch implements ADSearchAdapterInterface
         $searchName = $strict ? $name : $name.'*';
 
         foreach ($fields as $field) {
-            $filter = $filter.'('.$field.'='.$searchName.')';
+            $filter .= '(' . $field . '=' . $searchName . ')';
         }
 
-        $filter = '(|'.$filter.')';
+        $filter = '(|' . $filter . ')';
 
         return '(&(objectclass=user)'.$filter.')';
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param string $value
      *
      * @return  string
@@ -139,29 +138,11 @@ class ServerSearch implements ADSearchAdapterInterface
         foreach ($metaChars as $key => $val) {
             $quotedMetaChars[$key] = '\\'.\dechex(\ord($val));
         }
-        $cleaned = str_replace(
+
+        return str_replace(
             $metaChars,
             $quotedMetaChars,
             $value
         );
-
-        return $cleaned;
-    }
-
-    /**
-     * @param UuidInterface $uuid
-     *
-     * @return string
-     */
-    protected function uuidToGuidHex(UuidInterface $uuid): string
-    {
-        $guid = $uuid->getBytes();
-        $guidHex = '';
-        $length = \strlen($guid);
-        for ($i = 0; $i < $length; ++$i) {
-            $guidHex .= '\\'.str_pad(dechex(\ord($guid[$i])), 2, '0', STR_PAD_LEFT);
-        }
-
-        return $guidHex;
     }
 }
