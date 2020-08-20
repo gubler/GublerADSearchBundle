@@ -13,7 +13,7 @@ namespace Gubler\ADSearchBundle\Model\Search\ActiveDirectory;
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
 use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
 use Gubler\ADSearchBundle\Lib\GuidTools;
-use Ramsey\Uuid\Guid\Guid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Ldap;
 
@@ -45,7 +45,11 @@ class ServerSearch implements ADSearchAdapterInterface
         return $this->ldap
             ->query(
                 '',
-                $this->buildSearchFilter($escapedTerm, $fields, false)
+                $this->buildSearchFilter(
+                    $escapedTerm,
+                    $fields,
+                    false
+                )
             )
             ->execute()
             ->toArray()
@@ -66,7 +70,11 @@ class ServerSearch implements ADSearchAdapterInterface
 
         $results = $this->ldap->query(
             '',
-            $this->buildSearchFilter($escapedTerm, [$byField], true)
+            $this->buildSearchFilter(
+                $escapedTerm,
+                [$byField],
+                true
+            )
         )->execute();
 
         if (empty($results)) {
@@ -81,17 +89,21 @@ class ServerSearch implements ADSearchAdapterInterface
     }
 
     /**
-     * @param Guid $guid
+     * @param UuidInterface $adGuid
      *
      * @return null|Entry
      *
      * @throws NonUniqueADResultException
      */
-    public function find(Guid $guid): ?Entry
+    public function find(UuidInterface $adGuid): ?Entry
     {
         $results = $this->ldap->query(
             '',
-            $this->buildSearchFilter(GuidTools::guidToADHex($guid), ['objectGUID'], true)
+            $this->buildSearchFilter(
+                GuidTools::guidToADHex($adGuid),
+                ['objectGUID'],
+                true
+            )
         )->execute();
 
         if (empty($results)) {

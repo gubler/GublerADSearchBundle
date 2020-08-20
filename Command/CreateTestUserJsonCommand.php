@@ -9,7 +9,7 @@
  */
 namespace Gubler\ADSearchBundle\Command;
 
-use Gubler\ADSearchBundle\Lib\GuidTools;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -464,7 +464,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => $user['lastName'].', '.$user['firstName'],
             ],
             'objectGUID' => [
-                0 => utf8_encode((GuidTools::convertStringtoGuid($user['guid']))->getBytes()),
+                0 => utf8_encode((Uuid::fromString($user['guid']))->getBytes()),
             ],
             'userAccountControl' => [
                 0 => '111222',

@@ -11,9 +11,9 @@
 namespace Gubler\ADSearchBundle\Model\Search\ArraySearch;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
-use Gubler\ADSearchBundle\Lib\GuidTools;
 use Gubler\ADSearchBundle\Model\Search\ADSearchAdapterInterface;
-use Ramsey\Uuid\Guid\Guid;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 
 class ArraySearch implements ADSearchAdapterInterface
@@ -98,16 +98,16 @@ class ArraySearch implements ADSearchAdapterInterface
     }
 
     /**
-     * @param Guid $guid
+     * @param UuidInterface $adGuid
      *
      * @return null|Entry
      */
-    public function find(Guid $guid): ?Entry
+    public function find(UuidInterface $adGuid): ?Entry
     {
-        $users = array_filter($this->testUsers, function(array $entry) use ($guid) {
-            $arrayGuid = GuidTools::convertBytesToGuid($entry['objectGUID'][0]);
+        $users = array_filter($this->testUsers, function(array $entry) use ($adGuid) {
+            $arrayGuid = Uuid::fromBytes($entry['objectGUID'][0]);
 
-            return $arrayGuid->equals($guid);
+            return $arrayGuid->equals($adGuid);
         });
 
         if (count($users) > 1) {

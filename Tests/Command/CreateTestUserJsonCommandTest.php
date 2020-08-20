@@ -24,11 +24,11 @@ class CreateTestUserJsonCommandTest extends TestCase
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['outputPath' => './']);
 
-        $this->assertFileExists('./test_users.json');
+        self::assertFileExists('./test_users.json');
 
         $testUsers = json_decode(file_get_contents('./test_users.json'), true);
 
-        $this->assertEquals('Admin, System', $testUsers[0]['cn'][0]);
+        self::assertEquals('Admin, System', $testUsers[0]['cn'][0]);
 
         unlink('./test_users.json');
     }

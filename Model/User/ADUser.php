@@ -10,13 +10,13 @@
 
 namespace Gubler\ADSearchBundle\Model\User;
 
-use Ramsey\Uuid\Guid\Guid;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
-use Gubler\ADSearchBundle\Lib\GuidTools;
 
 class ADUser implements ADUserInterface
 {
-    /** @var Guid */
+    /** @var UuidInterface */
     protected $ADGuid;
     /** @var string */
     protected $ADDn;
@@ -34,9 +34,9 @@ class ADUser implements ADUserInterface
     }
 
     /**
-     * @return Guid
+     * @return UuidInterface
      */
-    public function getADGuid(): Guid
+    public function getADGuid(): UuidInterface
     {
         return $this->ADGuid;
     }
@@ -73,9 +73,8 @@ class ADUser implements ADUserInterface
     public function setADInfo(Entry $entry): ADUserInterface
     {
         $this->ADDn = $entry->getDn();
-        $this->ADGuid = GuidTools::convertBytesToGuid($entry->getAttribute('objectGUID')[0]);
-        $this->ADSamAccountName = $entry->getAttribute('sAMAccountName');
-        $this->ADSamAccountName = $this->ADSamAccountName[0];
+        $this->ADGuid = Uuid::fromBytes($entry->getAttribute('objectGUID')[0]);
+        $this->ADSamAccountName = $entry->getAttribute('sAMAccountName')[0];
         $this->ADAttributes = $entry->getAttributes();
 
         return $this;

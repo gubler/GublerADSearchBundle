@@ -2,31 +2,11 @@
 
 namespace Gubler\ADSearchBundle\Lib;
 
-use Ramsey\Uuid\Guid\Guid;
-use Ramsey\Uuid\FeatureSet;
-use Ramsey\Uuid\UuidFactory;
+use Ramsey\Uuid\UuidInterface;
 
 final class GuidTools
 {
-    public static function convertBytesToGuid(string $guidBytes): Guid
-    {
-        $useGuids = true;
-        $featureSet = new FeatureSet($useGuids);
-        $factory = new UuidFactory($featureSet);
-
-        return $factory->fromBytes($guidBytes);
-    }
-
-    public static function convertStringtoGuid(string $guidString): Guid
-    {
-        $useGuids = true;
-        $featureSet = new FeatureSet($useGuids);
-        $factory = new UuidFactory($featureSet);
-
-        return $factory->fromString($guidString);
-    }
-
-    public static function guidToADHex(Guid $guid): string
+    public static function guidToADHex(UuidInterface $guid): string
     {
         $bytes = $guid->getBytes();
         $guidHex = '';

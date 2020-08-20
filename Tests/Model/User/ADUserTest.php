@@ -9,11 +9,10 @@
  */
 namespace Gubler\ADSearchBundle\Tests\Model\User;
 
-use Gubler\ADSearchBundle\Lib\GuidTools;
 use Gubler\ADSearchBundle\Model\User\ADUser;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Guid\Guid;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 
 /**
@@ -23,7 +22,7 @@ class ADUserTest extends TestCase
 {
     /** @var Entry */
     protected $ldapEntry;
-    /** @var Guid */
+    /** @var UuidInterface */
     protected $guid;
 
     /**
@@ -31,7 +30,7 @@ class ADUserTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->guid = GuidTools::convertStringtoGuid('ea2e7d5e-beea-472b-8105-11e762733a34');
+        $this->guid = Uuid::fromString('ea2e7d5e-beea-472b-8105-11e762733a34');
         $this->ldapEntry = new Entry(
             'CN=Appleseed\, Jenny A.,OU=Sowers,DC=appleseedorchards',
             [
@@ -85,9 +84,9 @@ class ADUserTest extends TestCase
     {
         $user = new ADUser($this->ldapEntry);
 
-        $this->assertEquals('ea2e7d5e-beea-472b-8105-11e762733a34', $user->getADGuid()->toString());
-        $this->assertEquals('AppleseedJ1', $user->getADSamAccountName());
-        $this->assertEquals('CN=Appleseed\, Jenny A.,OU=Sowers,DC=appleseedorchards', $user->getADDn());
-        $this->assertEquals($this->ldapEntry, $user->getADEntry());
+        self::assertEquals('ea2e7d5e-beea-472b-8105-11e762733a34', $user->getADGuid()->toString());
+        self::assertEquals('AppleseedJ1', $user->getADSamAccountName());
+        self::assertEquals('CN=Appleseed\, Jenny A.,OU=Sowers,DC=appleseedorchards', $user->getADDn());
+        self::assertEquals($this->ldapEntry, $user->getADEntry());
     }
 }

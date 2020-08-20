@@ -10,10 +10,10 @@
 namespace Gubler\ADSearchBundle\Test\Model\Search\ActiveDirectory;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
-use Gubler\ADSearchBundle\Lib\GuidTools;
 use Gubler\ADSearchBundle\Model\Search\ActiveDirectory\LdapFactory;
 use Gubler\ADSearchBundle\Model\Search\ActiveDirectory\ServerSearch;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Adapter\ExtLdap\Collection;
 use Symfony\Component\Ldap\Adapter\QueryInterface;
@@ -39,7 +39,7 @@ class ServerSearchTest extends TestCase
         $this->query = $this->getMockBuilder(QueryInterface::class)->getMock();
         $this->adapter = $this->getMockBuilder(AdapterInterface::class)->getMock();
         $this->adapter
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('createQuery')
             ->willReturn($this->query)
         ;
@@ -56,7 +56,7 @@ class ServerSearchTest extends TestCase
     public function canSearchForUsers(): void
     {
         $this->query
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('execute')
             ->willReturn($this->ldapReturnEntries(true))
         ;
@@ -69,14 +69,14 @@ class ServerSearchTest extends TestCase
         $result = [];
         $found = $this->search->search('particle', ['displayName']);
         foreach ($found as $entry) {
-            $this->assertInstanceOf(Entry::class, $entry);
+            self::assertInstanceOf(Entry::class, $entry);
             /** @var Entry $entry */
             $displayName = $entry->getAttribute('displayName')[0];
             $result[] = $displayName;
-            $this->assertContains($displayName, $expected);
+            self::assertContains($displayName, $expected);
         }
 
-        $this->assertCount(2, $result);
+        self::assertCount(2, $result);
     }
 
     /**
@@ -85,17 +85,17 @@ class ServerSearchTest extends TestCase
     public function canFindUserByGuid(): void
     {
         $this->query
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('execute')
             // will return an array with the first test Entry
             ->willReturn([$this->ldapReturnEntries()[0]])
         ;
 
         $expected = 'Particle, Proton';
-        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
         $entry = $this->search->find($guid);
-        $this->assertInstanceOf(Entry::class, $entry);
-        $this->assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        self::assertInstanceOf(Entry::class, $entry);
+        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
     }
 
     /**
@@ -104,15 +104,15 @@ class ServerSearchTest extends TestCase
     public function findCanReturnNull(): void
     {
         $this->query
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('execute')
             // will return an array with the first test Entry
             ->willReturn([])
         ;
 
-        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
         $entry = $this->search->find($guid);
-        $this->assertNull($entry);
+        self::assertNull($entry);
     }
 
     /**
@@ -123,12 +123,12 @@ class ServerSearchTest extends TestCase
         $this->expectException(NonUniqueADResultException::class);
 
         $this->query
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('execute')
             ->willReturn($this->ldapReturnEntries())
         ;
 
-        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
         $this->search->find($guid);
     }
 
@@ -138,7 +138,7 @@ class ServerSearchTest extends TestCase
     public function canFindUserByField(): void
     {
         $this->query
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('execute')
             // will return an array with the first test Entry
             ->willReturn([$this->ldapReturnEntries()[0]])
@@ -147,8 +147,8 @@ class ServerSearchTest extends TestCase
         $expected = 'Particle, Proton';
 
         $entry = $this->search->findOne('sAMAccountName', 'atomproton');
-        $this->assertInstanceOf(Entry::class, $entry);
-        $this->assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        self::assertInstanceOf(Entry::class, $entry);
+        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
     }
 
     /**
@@ -157,13 +157,13 @@ class ServerSearchTest extends TestCase
     public function findByCanReturnNull(): void
     {
         $this->query
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('execute')
             ->willReturn([])
         ;
 
         $entry = $this->search->findOne('sAMAccountName', 'atomproton');
-        $this->assertNull($entry);
+        self::assertNull($entry);
     }
 
     /**
@@ -174,7 +174,7 @@ class ServerSearchTest extends TestCase
         $this->expectException(NonUniqueADResultException::class);
 
         $this->query
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('execute')
             ->willReturn($this->ldapReturnEntries())
         ;

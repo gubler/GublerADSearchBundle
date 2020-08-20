@@ -10,15 +10,15 @@
 
 namespace Gubler\ADSearchBundle\Model\User;
 
-use Ramsey\Uuid\Guid\Guid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Ldap\Entry;
 
 interface ADUserInterface
 {
     /**
-     * @return Guid
+     * @return UuidInterface
      */
-    public function getADGuid(): Guid;
+    public function getADGuid(): UuidInterface;
 
     /**
      * @return string

@@ -9,12 +9,10 @@
  */
 namespace Gubler\ADSearchBundle\Test\Model\Search\ArraySearch;
 
-use Gubler\ADSearchBundle\Lib\GuidTools;
 use Gubler\ADSearchBundle\Model\Search\ArraySearch\ArraySearch;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Ldap\Entry;
-use Symfony\Component\VarDumper\VarDumper;
 
 class ArraySearchTest extends TestCase
 {
@@ -39,15 +37,15 @@ class ArraySearchTest extends TestCase
 
         $result = [];
         $found = $this->search->search('particle', ['displayName']);
-        $this->assertCount(3, $found);
+        self::assertCount(3, $found);
         foreach ($found as $entry) {
-            $this->assertInstanceOf(Entry::class, $entry);
+            self::assertInstanceOf(Entry::class, $entry);
             $displayName = $entry->getAttribute('displayName')[0];
             $result[] = $displayName;
-            $this->assertContains($displayName, $expected);
+            self::assertContains($displayName, $expected);
         }
 
-        $this->assertCount(3, $result);
+        self::assertCount(3, $result);
     }
 
     /**
@@ -57,12 +55,12 @@ class ArraySearchTest extends TestCase
     {
         $expected = 'Particle, Proton';
 
-        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
 
         $entry = $this->search->find($guid);
 
-        $this->assertInstanceOf(Entry::class, $entry);
-        $this->assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        self::assertInstanceOf(Entry::class, $entry);
+        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
     }
 
     /**
@@ -72,13 +70,13 @@ class ArraySearchTest extends TestCase
     {
         $expected = 'Particle, Proton';
 
-        $guid = GuidTools::convertStringtoGuid('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
         $bytes = $guid->getBytes();
-        $guid = GuidTools::convertBytestoGuid($bytes);
+        $guid = Uuid::fromBytes($bytes);
         $entry = $this->search->find($guid);
 
-        $this->assertInstanceOf(Entry::class, $entry);
-        $this->assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        self::assertInstanceOf(Entry::class, $entry);
+        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
     }
 
     /**
@@ -86,9 +84,9 @@ class ArraySearchTest extends TestCase
      */
     public function findCanReturnNull(): void
     {
-        $guid = GuidTools::convertStringtoGuid('192D7591-6036-4358-9239-BEA350285CA1');
+        $guid = Uuid::fromString('192D7591-6036-4358-9239-BEA350285CA1');
         $entry = $this->search->find($guid);
-        $this->assertNull($entry);
+        self::assertNull($entry);
     }
 
     /**
@@ -99,10 +97,10 @@ class ArraySearchTest extends TestCase
         $expected = 'Particle, Proton';
 
         $entry = $this->search->findOne('samaccountname', 'atomproton');
-        $this->assertInstanceOf(Entry::class, $entry);
-        $this->assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        self::assertInstanceOf(Entry::class, $entry);
+        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
 
         $entry = $this->search->findOne('samaccountname', 'atompro');
-        $this->assertNull($entry);
+        self::assertNull($entry);
     }
 }
