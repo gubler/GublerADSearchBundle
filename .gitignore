@@ -5,4 +5,4 @@ phpunit.xml
 test.php
 LdapTest.php
 /.phpunit.result.cache
-/.composer.lock
+/composer.lock
