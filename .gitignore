@@ -1,8 +1,5 @@
 /vendor/
-/build/
 phpunit.xml
-.php_cs.cache
-test.php
-LdapTest.php
 /.phpunit.result.cache
+/.php-cs-fixer.cache
 /composer.lock

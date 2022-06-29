@@ -1,20 +1,20 @@
 # GublerADSearchBundle
 
-This is a Symfony 5 bundle to make searching Active Directory (or other LDAP directories) easier.
+This is a Symfony 6.1 bundle to make searching Active Directory (or other LDAP directories) easier.
 
-**Note:** If you want to use this in Symfony 4, use the 1.2 release branch.
+| Symfony Version | Bundle Version | PHP Version |
+|-----------------|----------------|-------------|
+| 6.1             | 5.0            | >=8.1       |
+| 5.0 - 6.0       | 4.x            | >=7.2       |
+| >= 4.4          | 1.2            | >=7.0       |
 
 **DO NOT USE THE 1.3 Release, it is very broken**.
 
 ## Example
 
 ```php
-/** @var ADSearchService */
-protected $adSearch;
-
-public function __construct(ADSearchService $adSearch)
+public function __construct(private ADSearchService $adSearch)
 {
-    $this->adSearch = $adSearch;
 }
 
 public function search () {
@@ -57,7 +57,7 @@ Until a recipe has been created, copy the following to your `.env` file:
 
 ```dotenv
 ###> gubler/ad-search-bundle ###
-AD_SEARCH_ARRAY_TEST_USERS='%kernel.project_dir%/config/packages/dev/test_users.json'
+AD_SEARCH_ARRAY_TEST_USERS='%kernel.project_dir%/var/test_users.json'
 AD_SEARCH_SERVER_ADDRESS=
 AD_SEARCH_SERVER_PORT=3268
 AD_SEARCH_BIND_USER=
@@ -84,13 +84,13 @@ gubler_ad_search:
 
 #### Array of Test Users Configuration
 
-First you need to create a `test_users.json` file. ADSearchBundle can do this for you by running the command to create the file in `config/packages/dev`:
+First you need to create a `test_users.json` file. ADSearchBundle can do this for you by running the command to create the file in the `var`:
 
 ```bash
 bin/console ad-search:create-user-json
 ```
 
-Create the file `config/packages/dev/gubler_ad_search.yaml` and then add the following configuration:
+Create the file `config/packages/gubler_ad_search.yaml` and then add the following configuration:
 
 ```yaml
 gubler_ad_search:
@@ -105,16 +105,32 @@ gubler_ad_search:
 
 #### Different Environments
 
-The common use is to add the _Server_ configuration to `config/packages/gubler_ad_search.yaml` and the _Array_ configuration to `config/packages/dev/gubler_ad_search.yaml`. This will let you use Active Directory in `prod` and a test array in `dev`.
+The common use is to use _Server_ configuration in PROD and _Array_ configuration in DEV:
+
+```yaml
+gubler_ad_search:
+    connection_type: array
+    config:
+        address: ~
+        port: ~
+        bind_user: ~
+        bind_password: ~
+        test_users: "%kernel.project_dir%/var/test_users.json"
+
+when@prod:
+    gubler_ad_search:
+        connection_type: server
+        config:
+            address: '%env(AD_SEARCH_SERVER_ADDRESS)%'
+            port: 3268
+            bind_user: '%env(AD_SEARCH_BIND_USER)%'
+            bind_password: '%env(AD_SEARCH_BIND_PASSWORD)%'
+            test_users: ~
+
+```
 
 ## Roadmap
 
 ### Features
 
 - Symfony Recipe to ease installation
-- Move config to environment variables
-
-### Documentation
-
-- Custom Search Adapters (implementing `ADSearchAdapterInterface`)
-- Custom LDAP Factories (implementing `LdapFactoryInterface`)
