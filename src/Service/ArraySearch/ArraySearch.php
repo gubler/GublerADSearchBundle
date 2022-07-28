@@ -43,7 +43,7 @@ class ArraySearch implements ADSearchAdapterInterface
      *
      * @return Entry[]
      */
-    public function search(string $term, array $fields): array
+    public function search(string $term, array $fields, int $maxResults = 50): array
     {
         $filteredUsers = array_filter($this->testUsers, function (array $row) use ($term, $fields) {
             $fields = array_map('strtolower', $fields);

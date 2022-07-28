@@ -32,7 +32,7 @@ class ServerSearch implements ADSearchAdapterInterface
      *
      * @return Entry[]
      */
-    public function search(string $term, array $fields): array
+    public function search(string $term, array $fields, int $maxResults = 50): array
     {
         $escapedTerm = $this->escape($term);
 
@@ -43,7 +43,10 @@ class ServerSearch implements ADSearchAdapterInterface
                     $escapedTerm,
                     $fields,
                     false
-                )
+                ),
+                [
+                    'sizeLimit' => $maxResults,
+                ],
             )
             ->execute()
             ->toArray()
