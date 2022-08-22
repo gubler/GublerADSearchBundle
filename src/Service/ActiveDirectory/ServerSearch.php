@@ -88,7 +88,7 @@ class ServerSearch implements ADSearchAdapterInterface
         $results = $this->ldap->query(
             '',
             $this->buildSearchFilter(
-                $adGuid->toBinary(),
+                ldap_escape($adGuid->toBinary()),
                 ['objectGUID'],
                 true
             )
