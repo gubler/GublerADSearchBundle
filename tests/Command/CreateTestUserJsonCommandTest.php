@@ -20,31 +20,36 @@ use Symfony\Component\Console\Tester\CommandTester;
 class CreateTestUserJsonCommandTest extends TestCase
 {
     /**
-     * @covers \Gubler\ADSearchBundle\Command\CreateTestUserJson
+     * @covers \Gubler\ADSearchBundle\Command\CreateTestUserJsonCommand
      */
     public function testCanExecuteCommand(): void
     {
         $commandTester = $this->createCommandTester();
-        $commandTester->execute(['outputPath' => './']);
+        $commandTester->execute(input: ['outputPath' => './']);
 
-        self::assertFileExists('./test_users.json');
+        self::assertFileExists(filename: './test_users.json');
 
-        $testUsers = json_decode(file_get_contents('./test_users.json'), true, 512, \JSON_THROW_ON_ERROR);
+        $testUsers = json_decode(
+            json: file_get_contents(filename: './test_users.json') ?:
+                throw new \DomainException(message: 'Unable to read file'),
+            associative: true,
+            depth: 512,
+            flags: \JSON_THROW_ON_ERROR);
 
-        self::assertEquals('Admin, System', $testUsers[0]['cn'][0]);
+        self::assertEquals(expected: 'Admin, System', actual: $testUsers[0]['cn'][0]);
 
-        unlink('./test_users.json');
+        unlink(filename: './test_users.json');
     }
 
     private function createCommandTester(): CommandTester
     {
         $application = new Application();
 
-        $application->setAutoExit(false);
+        $application->setAutoExit(boolean: false);
 
         $command = new CreateTestUserJsonCommand();
-        $application->add($command);
+        $application->add(command: $command);
 
-        return new CommandTester($application->find('ad-search:create-user-json'));
+        return new CommandTester(command: $application->find(name: 'ad-search:create-user-json'));
     }
 }

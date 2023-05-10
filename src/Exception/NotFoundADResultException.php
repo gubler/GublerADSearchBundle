@@ -18,6 +18,6 @@ class NotFoundADResultException extends \Exception
     {
         $message = 'No Matching User Found';
 
-        parent::__construct($message, $code, $previous);
+        parent::__construct(message: $message, code: $code, previous: $previous);
     }
 }

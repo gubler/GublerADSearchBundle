@@ -18,6 +18,6 @@ class NonUniqueADResultException extends \Exception
     {
         $message = 'Search returned multiple results. Should only return one result';
 
-        parent::__construct($message, $code, $previous);
+        parent::__construct(message: $message, code: $code, previous: $previous);
     }
 }

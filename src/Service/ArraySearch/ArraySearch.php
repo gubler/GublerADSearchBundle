@@ -17,22 +17,27 @@ use Gubler\ADSearchBundle\Service\ADSearchAdapterInterface;
 use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Uid\Uuid;
 
-class ArraySearch implements ADSearchAdapterInterface
+final class ArraySearch implements ADSearchAdapterInterface
 {
-    protected array $testUsers;
+    private array $testUsers;
 
     public function __construct(string $pathToTestUsersJson)
     {
         $this->testUsers = json_decode(
-            file_get_contents($pathToTestUsersJson) ?: '',
-            true,
-            512,
-            \JSON_THROW_ON_ERROR
+            json: file_get_contents(filename: $pathToTestUsersJson) ?: '',
+            associative: true,
+            depth: 512,
+            flags: \JSON_THROW_ON_ERROR
         );
 
         // decode utf8 GUIDs to binary to be the same as AD
         foreach ($this->testUsers as $key => $user) {
-            $this->testUsers[$key]['objectGUID'][0] = utf8_decode($user['objectGUID'][0]);
+            $guid = $user['objectGUID'][0];
+            $this->testUsers[$key]['objectGUID'][0] = mb_convert_encoding(
+                string: $guid,
+                to_encoding: 'ISO-8859-1',
+                from_encoding: 'UTF-8'
+            );
         }
     }
 
@@ -43,21 +48,21 @@ class ArraySearch implements ADSearchAdapterInterface
      *
      * @return Entry[]
      */
-    public function search(string $term, array $fields, int $maxResults = 50): array
+    public function search(string $term, array $fields, string $dn = '', int $maxResults = 50): array
     {
-        $filteredUsers = array_filter($this->testUsers, function (array $row) use ($term, $fields) {
-            $fields = array_map('strtolower', $fields);
+        $filteredUsers = array_filter(array: $this->testUsers, callback: function (array $row) use ($term, $fields) {
+            $fields = array_map(callback: 'strtolower', array: $fields);
 
             // iterate through each field in the row
-            $row = array_change_key_case($row);
+            $row = array_change_key_case(array: $row);
             foreach ($row as $field => $value) {
                 // check if field is in list of fields to search
-                if (false === \in_array($field, $fields, true)) {
+                if (false === \in_array(needle: $field, haystack: $fields, strict: true)) {
                     continue;
                 }
                 /** @var array $value */
                 foreach ($value as $test) {
-                    if ($this->testTermInValue($term, $test)) {
+                    if ($this->testTermInValue(term: $term, value: $test)) {
                         return true;
                     }
                 }
@@ -66,55 +71,55 @@ class ArraySearch implements ADSearchAdapterInterface
             return false;
         });
 
-        return array_map(function (array $row) {
-            return new Entry($row['distinguishedName'][0], $row);
-        }, $filteredUsers);
+        return array_map(callback: function (array $row) {
+            return new Entry(dn: $row['distinguishedName'][0], attributes: $row);
+        }, array: $filteredUsers);
     }
 
-    public function findOne(string $byField, string $term): ?Entry
+    public function findOne(string $byField, string $term, string $dn = ''): ?Entry
     {
         $users = array_filter(
-            $this->testUsers,
-            function (array $row) use ($byField, $term) {
-                $row = array_change_key_case($row, \CASE_LOWER);
-                $byField = strtolower($byField);
+            array: $this->testUsers,
+            callback: function (array $row) use ($byField, $term) {
+                $row = array_change_key_case(array: $row, case: \CASE_LOWER);
+                $byField = strtolower(string: $byField);
 
-                return 0 === strcasecmp($row[$byField][0], $term);
+                return 0 === strcasecmp(string1: $row[$byField][0], string2: $term);
             }
         );
 
-        $users = array_values($users);
+        $users = array_values(array: $users);
 
-        if (1 !== \count($users)) {
+        if (1 !== \count(value: $users)) {
             return null;
         }
 
         $user = $users[0];
 
-        return new Entry($user['distinguishedName'][0], $user);
+        return new Entry(dn: $user['distinguishedName'][0], attributes: $user);
     }
 
-    public function find(Uuid $adGuid): ?Entry
+    public function find(Uuid $adGuid, string $dn = ''): ?Entry
     {
-        $users = array_filter($this->testUsers, function (array $entry) use ($adGuid) {
-            return Uuid::fromBinary($entry['objectGUID'][0])->equals($adGuid);
+        $users = array_filter(array: $this->testUsers, callback: function (array $entry) use ($adGuid) {
+            return Uuid::fromBinary(uid: $entry['objectGUID'][0])->equals(other: $adGuid);
         });
 
-        if (\count($users) > 1) {
+        if (\count(value: $users) > 1) {
             throw new NonUniqueADResultException();
         }
 
-        if (0 === \count($users)) {
+        if (0 === \count(value: $users)) {
             return null;
         }
 
-        $user = current($users);
+        $user = current(array: $users);
 
-        return new Entry($user['distinguishedName'][0], $user);
+        return new Entry(dn: $user['distinguishedName'][0], attributes: $user);
     }
 
     protected function testTermInValue(string $term, string $value): bool
     {
-        return 0 === stripos($value, $term);
+        return 0 === stripos(haystack: $value, needle: $term);
     }
 }

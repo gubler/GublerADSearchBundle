@@ -14,18 +14,38 @@ namespace Gubler\ADSearchBundle\Service\ActiveDirectory;
 
 use Symfony\Component\Ldap\Ldap;
 
-class LdapFactory implements LdapFactoryInterface
+final class LdapFactory implements LdapFactoryInterface
 {
     protected Ldap $ldap;
 
-    public function __construct(string $host, int $port, string $bindDn, string $bindPassword)
-    {
+    public function __construct(
+        string $host,
+        int $port,
+        string $bindDn,
+        string $bindPassword,
+        bool $secure,
+        ?string $certPath
+    ) {
+        $config = [
+            'host' => $host,
+            'port' => $port,
+        ];
+
+        if ($secure) {
+            $config['encryption'] = 'tls';
+
+            if (null !== $certPath) {
+                $config['options']['x_tls_cacertfile'] = $certPath;
+                $config['options']['x_tls_require_cert'] = true;
+            }
+        }
+
         $this->ldap = Ldap::create(
-            'ext_ldap',
-            ['connection_string' => 'ldap://' . $host . ':' . $port]
+            adapter: 'ext_ldap',
+            config: $config,
         );
 
-        $this->ldap->bind($bindDn, $bindPassword);
+        $this->ldap->bind(dn: $bindDn, password: $bindPassword);
     }
 
     public function getLdapConnection(): Ldap

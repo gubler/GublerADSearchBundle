@@ -6,7 +6,6 @@ namespace Gubler\ADSearchBundle\Test;
 
 use Symfony\Component\Ldap\Adapter\CollectionInterface;
 use Symfony\Component\Ldap\Entry;
-use Traversable;
 
 final class BasicCollection implements CollectionInterface
 {
@@ -30,7 +29,7 @@ final class BasicCollection implements CollectionInterface
         return \count($this->entries);
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         if (0 === $this->count()) {
             return;

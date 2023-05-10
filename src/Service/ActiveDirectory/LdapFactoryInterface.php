@@ -16,7 +16,14 @@ use Symfony\Component\Ldap\Ldap;
 
 interface LdapFactoryInterface
 {
-    public function __construct(string $host, int $port, string $bindDn, string $bindPassword);
+    public function __construct(
+        string $host,
+        int $port,
+        string $bindDn,
+        string $bindPassword,
+        bool $secure,
+        ?string $certPath
+    );
 
     public function getLdapConnection(): Ldap;
 }

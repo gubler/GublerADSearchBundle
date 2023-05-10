@@ -14,9 +14,10 @@ namespace Gubler\ADSearchBundle\Test\Service\ActiveDirectory;
 
 use Gubler\ADSearchBundle\Exception\NonUniqueADResultException;
 use Gubler\ADSearchBundle\Lib\EntryAttributeHelper;
-use Gubler\ADSearchBundle\Service\ActiveDirectory\LdapFactory;
+use Gubler\ADSearchBundle\Service\ActiveDirectory\LdapFactoryInterface;
 use Gubler\ADSearchBundle\Service\ActiveDirectory\ServerSearch;
 use Gubler\ADSearchBundle\Test\BasicCollection;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Adapter\CollectionInterface;
@@ -28,7 +29,9 @@ use Symfony\Component\Uid\Uuid;
 class ServerSearchTest extends TestCase
 {
     private ServerSearch $search;
-
+    /**
+     * @phpstan-var QueryInterface&MockObject
+     */
     private QueryInterface $query;
 
     /**
@@ -39,18 +42,18 @@ class ServerSearchTest extends TestCase
     protected function setUp(): void
     {
         $this->setUsers();
-        $this->query = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $adapter = $this->getMockBuilder(AdapterInterface::class)->getMock();
+        $this->query = $this->getMockBuilder(className: QueryInterface::class)->getMock();
+        $adapter = $this->getMockBuilder(className: AdapterInterface::class)->getMock();
         $adapter
             ->expects(self::once())
             ->method('createQuery')
-            ->willReturn($this->query)
+            ->willReturn(value: $this->query)
         ;
-        $ldap = new Ldap($adapter);
-        $ldapFactory = $this->createMock(LdapFactory::class);
+        $ldap = new Ldap(adapter: $adapter);
+        $ldapFactory = $this->createMock(originalClassName: LdapFactoryInterface::class);
         $ldapFactory->method('getLdapConnection')
-            ->willReturn($ldap);
-        $this->search = new ServerSearch($ldapFactory);
+            ->willReturn(value: $ldap);
+        $this->search = new ServerSearch(ldapFactory: $ldapFactory);
     }
 
     /**
@@ -61,7 +64,7 @@ class ServerSearchTest extends TestCase
         $this->query
             ->expects(self::once())
             ->method('execute')
-            ->willReturn($this->ldapReturnEntries($this->users))
+            ->willReturn(value: $this->ldapReturnEntries(users: $this->users))
         ;
 
         $expected = [
@@ -70,15 +73,15 @@ class ServerSearchTest extends TestCase
         ];
 
         $result = [];
-        $found = $this->search->search('particle', ['displayName']);
+        $found = $this->search->search(term: 'particle', fields: ['displayName']);
         foreach ($found as $entry) {
-            self::assertInstanceOf(Entry::class, $entry);
-            $displayName = EntryAttributeHelper::getAttribute($entry, 'displayName');
+            self::assertInstanceOf(expected: Entry::class, actual: $entry);
+            $displayName = EntryAttributeHelper::getAttribute(entry: $entry, attribute: 'displayName');
             $result[] = $displayName;
-            self::assertContains($displayName, $expected);
+            self::assertContains(needle: $displayName, haystack: $expected);
         }
 
-        self::assertCount(2, $result);
+        self::assertCount(expectedCount: 2, haystack: $result);
     }
 
     /**
@@ -89,14 +92,18 @@ class ServerSearchTest extends TestCase
         $this->query
             ->expects(self::once())
             ->method('execute')
-            ->willReturn($this->ldapReturnEntries([$this->users[0]]))
+            ->willReturn(value: $this->ldapReturnEntries(users: [$this->users[0]]))
         ;
 
         $expected = 'Particle, Proton';
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
-        $entry = $this->search->find($guid);
-        self::assertInstanceOf(Entry::class, $entry);
-        self::assertEquals($expected, EntryAttributeHelper::getAttribute($entry, 'displayName'));
+        $guid = Uuid::fromString(uuid: '192D7590-6036-4358-9239-BEA350285CA1');
+        $entry = $this->search->find(adGuid: $guid);
+        self::assertInstanceOf(expected: Entry::class, actual: $entry);
+        self::assertEquals(
+            expected: $expected,
+            actual: EntryAttributeHelper::getAttribute(
+                entry: $entry,
+                attribute: 'displayName'));
     }
 
     /**
@@ -107,12 +114,12 @@ class ServerSearchTest extends TestCase
         $this->query
             ->expects(self::once())
             ->method('execute')
-            ->willReturn($this->ldapReturnEntries([]))
+            ->willReturn(value: $this->ldapReturnEntries(users: []))
         ;
 
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
-        $entry = $this->search->find($guid);
-        self::assertNull($entry);
+        $guid = Uuid::fromString(uuid: '192D7590-6036-4358-9239-BEA350285CA1');
+        $entry = $this->search->find(adGuid: $guid);
+        self::assertNull(actual: $entry);
     }
 
     /**
@@ -120,16 +127,16 @@ class ServerSearchTest extends TestCase
      */
     public function testThrowsNonUniqueErrorIfFindMethodFindsMultipleUsers(): void
     {
-        $this->expectException(NonUniqueADResultException::class);
+        $this->expectException(exception: NonUniqueADResultException::class);
 
         $this->query
             ->expects(self::once())
             ->method('execute')
-            ->willReturn($this->ldapReturnEntries($this->users))
+            ->willReturn(value: $this->ldapReturnEntries(users: $this->users))
         ;
 
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
-        $this->search->find($guid);
+        $guid = Uuid::fromString(uuid: '192D7590-6036-4358-9239-BEA350285CA1');
+        $this->search->find(adGuid: $guid);
     }
 
     /**
@@ -141,14 +148,15 @@ class ServerSearchTest extends TestCase
             ->expects(self::once())
             ->method('execute')
             // will return an array with the first test Entry
-            ->willReturn($this->ldapReturnEntries([$this->users[0]]))
+            ->willReturn(value: $this->ldapReturnEntries(users: [$this->users[0]]))
         ;
 
         $expected = 'Particle, Proton';
 
-        $entry = $this->search->findOne('sAMAccountName', 'atomproton');
-        self::assertInstanceOf(Entry::class, $entry);
-        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        $entry = $this->search->findOne(byField: 'sAMAccountName', term: 'atomproton');
+        self::assertInstanceOf(expected: Entry::class, actual: $entry);
+        $displayName = EntryAttributeHelper::getAttribute(entry: $entry, attribute: 'displayName');
+        self::assertEquals(expected: $expected, actual: $displayName);
     }
 
     /**
@@ -159,11 +167,11 @@ class ServerSearchTest extends TestCase
         $this->query
             ->expects(self::once())
             ->method('execute')
-            ->willReturn($this->ldapReturnEntries([]))
+            ->willReturn(value: $this->ldapReturnEntries(users: []))
         ;
 
-        $entry = $this->search->findOne('sAMAccountName', 'atomproton');
-        self::assertNull($entry);
+        $entry = $this->search->findOne(byField: 'sAMAccountName', term: 'atomproton');
+        self::assertNull(actual: $entry);
     }
 
     /**
@@ -171,23 +179,23 @@ class ServerSearchTest extends TestCase
      */
     public function testThrowsNonUniqueErrorIfFindByFindsMultipleUsers(): void
     {
-        $this->expectException(NonUniqueADResultException::class);
+        $this->expectException(exception: NonUniqueADResultException::class);
 
         $this->query
             ->expects(self::once())
             ->method('execute')
-            ->willReturn($this->ldapReturnEntries($this->users))
+            ->willReturn(value: $this->ldapReturnEntries(users: $this->users))
         ;
 
-        $this->search->findOne('sAMAccountName', 'atomproton');
+        $this->search->findOne(byField: 'sAMAccountName', term: 'atomproton');
     }
 
     private function setUsers(): void
     {
         $this->users = [
             new Entry(
-                'CN=Particle, Proton,OU=atom,DC=acme,DC=com',
-                [
+                dn: 'CN=Particle, Proton,OU=atom,DC=acme,DC=com',
+                attributes: [
                     'objectClass' => ['top', 'person', 'organizationalPerson', 'user'],
                     'cn' => ['Particle, Proton'],
                     'sn' => ['Proton'],
@@ -213,7 +221,7 @@ class ServerSearchTest extends TestCase
                     'proxyAddresses' => ['SMTP =>proton.particle@acme.com'],
                     'streetAddress' => ['123 The Atom'],
                     'name' => ['Particle, Proton'],
-                    'objectGUID' => [Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1')->toBinary()],
+                    'objectGUID' => [Uuid::fromString(uuid: '192D7590-6036-4358-9239-BEA350285CA1')->toBinary()],
                     'userAccountControl' => ['111222'],
                     'pwdLastSet' => ['131145256860505663'],
                     'primaryGroupID' => ['5521'],
@@ -227,8 +235,8 @@ class ServerSearchTest extends TestCase
                 ]
             ),
             new Entry(
-                'CN=Particle, Proton,OU=atom,DC=acme,DC=com',
-                [
+                dn: 'CN=Particle, Proton,OU=atom,DC=acme,DC=com',
+                attributes: [
                     'objectClass' => ['top', 'person', 'organizationalPerson', 'user'],
                     'cn' => ['Particle, Neutron'],
                     'sn' => ['Neutron'],
@@ -254,7 +262,7 @@ class ServerSearchTest extends TestCase
                     'proxyAddresses' => ['SMTP =>neutron.particle@acme.com'],
                     'streetAddress' => ['123 The Atom'],
                     'name' => ['Particle, Neutron'],
-                    'objectGUID' => [Uuid::fromString('5199FB62-A76F-45B1-B01B-8FB7B7C9248C')->toBinary()],
+                    'objectGUID' => [Uuid::fromString(uuid: '5199FB62-A76F-45B1-B01B-8FB7B7C9248C')->toBinary()],
                     'userAccountControl' => ['111222'],
                     'pwdLastSet' => ['131145256860505663'],
                     'primaryGroupID' => ['5521'],
@@ -277,6 +285,6 @@ class ServerSearchTest extends TestCase
      */
     private function ldapReturnEntries(array $users = []): CollectionInterface
     {
-        return new BasicCollection($users);
+        return new BasicCollection(entries: $users);
     }
 }

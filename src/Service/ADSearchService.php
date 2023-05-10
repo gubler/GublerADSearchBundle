@@ -35,23 +35,27 @@ class ADSearchService
      *
      * @return Entry[]
      */
-    public function search(string $term, array $fields = self::DEFAULT_SEARCH_FIELDS): array
-    {
-        return $this->adapter->search($term, $fields);
+    public function search(
+        string $term,
+        array $fields = self::DEFAULT_SEARCH_FIELDS,
+        string $dn = '',
+        int $maxResults = 50
+    ): array {
+        return $this->adapter->search(term: $term, fields: $fields, dn: $dn, maxResults: $maxResults);
     }
 
-    public function find(Uuid $guid): ?Entry
+    public function find(Uuid $guid, string $dn = ''): ?Entry
     {
-        return $this->adapter->find($guid);
+        return $this->adapter->find(adGuid: $guid, dn: $dn);
     }
 
-    public function findBySamAccountName(string $sAMAccountName): ?Entry
+    public function findBySamAccountName(string $sAMAccountName, string $dn = ''): ?Entry
     {
-        return $this->adapter->findOne('samaccountname', $sAMAccountName);
+        return $this->adapter->findOne(byField: 'samaccountname', term: $sAMAccountName, dn: $dn);
     }
 
-    public function findByEmail(string $email): ?Entry
+    public function findByEmail(string $email, string $dn = ''): ?Entry
     {
-        return $this->adapter->findOne('mail', $email);
+        return $this->adapter->findOne(byField: 'mail', term: $email, dn: $dn);
     }
 }

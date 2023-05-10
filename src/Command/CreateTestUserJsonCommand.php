@@ -28,25 +28,34 @@ class CreateTestUserJsonCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setHelp('This generates a JSON file that can be loaded when using the `array` connection type')
-            ->addArgument('outputPath', InputArgument::OPTIONAL, 'Path to put the generated JSON file.')
+            ->setHelp(help: 'This generates a JSON file that can be loaded when using the `array` connection type')
+            ->addArgument(
+                name: 'outputPath',
+                mode: InputArgument::OPTIONAL,
+                description: 'Path to put the generated JSON file.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $outputPath = $input->getArgument('outputPath') ?? 'var/cache';
+        $outputPath = $input->getArgument(name: 'outputPath') ?? 'var/cache';
         $ldapUsers = [];
         // create users
         foreach ($this->getUserArray() as $user) {
-            $ldapUsers[] = $this->createLdapData($user);
+            $ldapUsers[] = $this->createLdapData(user: $user);
         }
 
         // write user array to json file
         $path = $outputPath . '/test_users.json';
-        file_put_contents($path, json_encode($ldapUsers, \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT));
+        file_put_contents(
+            filename: $path,
+            data: json_encode(
+                value: $ldapUsers,
+                flags: \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT
+            )
+        );
 
-        $output->writeln('File Generated at: ' . $path);
+        $output->writeln(messages: 'File Generated at: ' . $path);
 
         return Command::SUCCESS;
     }
@@ -451,7 +460,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => 'Acme, Inc.',
             ],
             'proxyAddresses' => [
-                0 => 'SMTP:' . strtolower($user['firstName']) . '.' . strtolower($user['lastName']) . '@acme.com',
+                0 => 'SMTP:' . strtolower(string: $user['firstName']) . '.' . strtolower(string: $user['lastName']) . '@acme.com',
             ],
             'streetAddress' => [
                 0 => $user['address'],
@@ -460,7 +469,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => $user['lastName'] . ', ' . $user['firstName'],
             ],
             'objectGUID' => [
-                0 => utf8_encode((Uuid::fromString($user['guid']))->toBinary()),
+                0 => utf8_encode(string: (Uuid::fromString(uuid: $user['guid']))->toBinary()),
             ],
             'userAccountControl' => [
                 0 => '111222',
@@ -472,7 +481,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => '5521',
             ],
             'objectSid' => [
-                0 => 'S-1-5-21-3165297888-301567370-' . random_int(100, 1000) . '-1103',
+                0 => 'S-1-5-21-3165297888-301567370-' . random_int(min: 100, max: 1000) . '-1103',
             ],
             'sAMAccountName' => [
                 0 => $user['samAccountName'],
@@ -481,7 +490,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => '805306368',
             ],
             'userPrincipalName' => [
-                0 => strtolower($user['firstName']) . '.' . strtolower($user['lastName']) . '@acme.com',
+                0 => strtolower(string: $user['firstName']) . '.' . strtolower(string: $user['lastName']) . '@acme.com',
             ],
             'objectCategory' => [
                 0 => 'CN=Person,CN=Schema,CN=Configuration,DC=acme,DC=com',
@@ -490,7 +499,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => '131610992411099685',
             ],
             'mail' => [
-                0 => strtolower($user['firstName']) . '.' . strtolower($user['lastName']) . '@acme.com',
+                0 => strtolower(string: $user['firstName']) . '.' . strtolower(string: $user['lastName']) . '@acme.com',
             ],
         ];
     }

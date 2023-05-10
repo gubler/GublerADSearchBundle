@@ -22,9 +22,9 @@ interface ADSearchAdapterInterface
      *
      * @return Entry[]
      */
-    public function search(string $term, array $fields, int $maxResults): array;
+    public function search(string $term, array $fields, string $dn = '', int $maxResults = 50): array;
 
-    public function findOne(string $byField, string $term): ?Entry;
+    public function findOne(string $byField, string $term, string $dn = ''): ?Entry;
 
-    public function find(Uuid $adGuid): ?Entry;
+    public function find(Uuid $adGuid, string $dn = ''): ?Entry;
 }

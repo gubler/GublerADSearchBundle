@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Gubler\ADSearchBundle\Test\Service\ArraySearch;
 
+use Gubler\ADSearchBundle\Lib\EntryAttributeHelper;
 use Gubler\ADSearchBundle\Service\ArraySearch\ArraySearch;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Ldap\Entry;
@@ -23,7 +24,7 @@ class ArraySearchTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->search = new ArraySearch(__DIR__ . '/test_users.json');
+        $this->search = new ArraySearch(pathToTestUsersJson: __DIR__ . '/test_users.json');
     }
 
     /**
@@ -38,16 +39,16 @@ class ArraySearchTest extends TestCase
         ];
 
         $result = [];
-        $found = $this->search->search('particle', ['displayName']);
-        self::assertCount(3, $found);
+        $found = $this->search->search(term: 'particle', fields: ['displayName']);
+        self::assertCount(expectedCount: 3, haystack: $found);
         foreach ($found as $entry) {
-            self::assertInstanceOf(Entry::class, $entry);
-            $displayName = $entry->getAttribute('displayName')[0];
+            self::assertInstanceOf(expected: Entry::class, actual: $entry);
+            $displayName = EntryAttributeHelper::getAttribute(entry: $entry, attribute: 'displayName');
             $result[] = $displayName;
-            self::assertContains($displayName, $expected);
+            self::assertContains(needle: $displayName, haystack: $expected);
         }
 
-        self::assertCount(3, $result);
+        self::assertCount(expectedCount: 3, haystack: $result);
     }
 
     /**
@@ -57,12 +58,13 @@ class ArraySearchTest extends TestCase
     {
         $expected = 'Particle, Proton';
 
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = Uuid::fromString(uuid: '192D7590-6036-4358-9239-BEA350285CA1');
 
-        $entry = $this->search->find($guid);
+        $entry = $this->search->find(adGuid: $guid);
 
-        self::assertInstanceOf(Entry::class, $entry);
-        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        self::assertInstanceOf(expected: Entry::class, actual: $entry);
+        $displayName = EntryAttributeHelper::getAttribute(entry: $entry, attribute: 'displayName');
+        self::assertEquals(expected: $expected, actual: $displayName);
     }
 
     /**
@@ -72,13 +74,14 @@ class ArraySearchTest extends TestCase
     {
         $expected = 'Particle, Proton';
 
-        $guid = Uuid::fromString('192D7590-6036-4358-9239-BEA350285CA1');
+        $guid = Uuid::fromString(uuid: '192D7590-6036-4358-9239-BEA350285CA1');
         $bytes = $guid->toBinary();
-        $guid = Uuid::fromBinary($bytes);
-        $entry = $this->search->find($guid);
+        $guid = Uuid::fromBinary(uid: $bytes);
+        $entry = $this->search->find(adGuid: $guid);
 
-        self::assertInstanceOf(Entry::class, $entry);
-        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        self::assertInstanceOf(expected: Entry::class, actual: $entry);
+        $displayName = EntryAttributeHelper::getAttribute(entry: $entry, attribute: 'displayName');
+        self::assertEquals(expected: $expected, actual: $displayName);
     }
 
     /**
@@ -86,9 +89,9 @@ class ArraySearchTest extends TestCase
      */
     public function testFindCanReturnNull(): void
     {
-        $guid = Uuid::fromString('192D7591-6036-4358-9239-BEA350285CA1');
-        $entry = $this->search->find($guid);
-        self::assertNull($entry);
+        $guid = Uuid::fromString(uuid: '192D7591-6036-4358-9239-BEA350285CA1');
+        $entry = $this->search->find(adGuid: $guid);
+        self::assertNull(actual: $entry);
     }
 
     /**
@@ -98,11 +101,12 @@ class ArraySearchTest extends TestCase
     {
         $expected = 'Particle, Proton';
 
-        $entry = $this->search->findOne('samaccountname', 'atomproton');
-        self::assertInstanceOf(Entry::class, $entry);
-        self::assertEquals($expected, $entry->getAttribute('displayName')[0]);
+        $entry = $this->search->findOne(byField: 'samaccountname', term: 'atomproton');
+        self::assertInstanceOf(expected: Entry::class, actual: $entry);
+        $displayName = EntryAttributeHelper::getAttribute(entry: $entry, attribute: 'displayName');
+        self::assertEquals(expected: $expected, actual: $displayName);
 
-        $entry = $this->search->findOne('samaccountname', 'atompro');
-        self::assertNull($entry);
+        $entry = $this->search->findOne(byField: 'samaccountname', term: 'atompro');
+        self::assertNull(actual: $entry);
     }
 }

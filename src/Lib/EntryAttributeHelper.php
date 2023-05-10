@@ -17,16 +17,16 @@ final class EntryAttributeHelper
         bool $caseSensitive = false,
         int $return = self::RETURN_FIRST_VALUE,
     ): string {
-        $attributeValue = $entry->getAttribute($attribute, $caseSensitive);
+        $attributeValue = $entry->getAttribute(name: $attribute, caseSensitive: $caseSensitive);
 
-        if (!\is_array($attributeValue)) {
-            throw new \BadMethodCallException('Requested attribute does not exist.');
+        if (!\is_array(value: $attributeValue)) {
+            throw new \BadMethodCallException(message: 'Requested attribute does not exist.');
         }
 
         return match ($return) {
             self::RETURN_FIRST_VALUE => $attributeValue[0],
             self::RETURN_ALL_VALUES => $attributeValue,
-            default => throw new \InvalidArgumentException('Invalid return value'),
+            default => throw new \InvalidArgumentException(message: 'Invalid return value'),
         };
     }
 
@@ -36,16 +36,16 @@ final class EntryAttributeHelper
         bool $caseSensitive = false,
         int $return = self::RETURN_FIRST_VALUE,
     ): ?string {
-        $attributeValue = $entry->getAttribute($attribute, $caseSensitive);
+        $attributeValue = $entry->getAttribute(name: $attribute, caseSensitive: $caseSensitive);
 
-        if (!\is_array($attributeValue)) {
+        if (!\is_array(value: $attributeValue)) {
             return null;
         }
 
         return match ($return) {
             self::RETURN_FIRST_VALUE => $attributeValue[0],
             self::RETURN_ALL_VALUES => $attributeValue,
-            default => throw new \InvalidArgumentException('Invalid return value'),
+            default => throw new \InvalidArgumentException(message: 'Invalid return value'),
         };
     }
 }

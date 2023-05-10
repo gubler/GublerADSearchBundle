@@ -18,9 +18,9 @@ use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Uid\Uuid;
 
-class ServerSearch implements ADSearchAdapterInterface
+final class ServerSearch implements ADSearchAdapterInterface
 {
-    protected Ldap $ldap;
+    private Ldap $ldap;
 
     public function __construct(LdapFactoryInterface $ldapFactory)
     {
@@ -32,19 +32,19 @@ class ServerSearch implements ADSearchAdapterInterface
      *
      * @return Entry[]
      */
-    public function search(string $term, array $fields, int $maxResults = 50): array
+    public function search(string $term, array $fields, string $dn = '', int $maxResults = 50): array
     {
-        $escapedTerm = $this->escape($term);
+        $escapedTerm = $this->escape(value: $term);
 
         return $this->ldap
             ->query(
-                '',
-                $this->buildSearchFilter(
-                    $escapedTerm,
-                    $fields,
-                    false
+                dn: $dn,
+                query: $this->buildSearchFilter(
+                    name: $escapedTerm,
+                    fields: $fields,
+                    strict: false
                 ),
-                [
+                options: [
                     'sizeLimit' => $maxResults,
                 ],
             )
@@ -56,16 +56,16 @@ class ServerSearch implements ADSearchAdapterInterface
     /**
      * @throws NonUniqueADResultException
      */
-    public function findOne(string $byField, string $term): ?Entry
+    public function findOne(string $byField, string $term, string $dn = ''): ?Entry
     {
-        $escapedTerm = $this->escape($term);
+        $escapedTerm = $this->escape(value: $term);
 
         $results = $this->ldap->query(
-            '',
-            $this->buildSearchFilter(
-                $escapedTerm,
-                [$byField],
-                true
+            dn: $dn,
+            query: $this->buildSearchFilter(
+                name: $escapedTerm,
+                fields: [$byField],
+                strict: true
             )
         )->execute();
 
@@ -73,7 +73,7 @@ class ServerSearch implements ADSearchAdapterInterface
             return null;
         }
 
-        if (\count($results) > 1) {
+        if (\count(value: $results) > 1) {
             throw new NonUniqueADResultException();
         }
 
@@ -83,14 +83,14 @@ class ServerSearch implements ADSearchAdapterInterface
     /**
      * @throws NonUniqueADResultException
      */
-    public function find(Uuid $adGuid): ?Entry
+    public function find(Uuid $adGuid, string $dn = ''): ?Entry
     {
         $results = $this->ldap->query(
-            '',
-            $this->buildSearchFilter(
-                ldap_escape($adGuid->toBinary()),
-                ['objectGUID'],
-                true
+            dn: $dn,
+            query: $this->buildSearchFilter(
+                name: ldap_escape(value: $adGuid->toBinary()),
+                fields: ['objectGUID'],
+                strict: true
             )
         )->execute();
 
@@ -98,7 +98,7 @@ class ServerSearch implements ADSearchAdapterInterface
             return null;
         }
 
-        if (\count($results) > 1) {
+        if (\count(value: $results) > 1) {
             throw new NonUniqueADResultException();
         }
 
@@ -128,13 +128,13 @@ class ServerSearch implements ADSearchAdapterInterface
         $metaChars = ['\\00', '\\', '(', ')', '*'];
         $quotedMetaChars = [];
         foreach ($metaChars as $key => $val) {
-            $quotedMetaChars[$key] = '\\' . dechex(\ord($val));
+            $quotedMetaChars[$key] = '\\' . dechex(num: \ord(character: $val));
         }
 
         return str_replace(
-            $metaChars,
-            $quotedMetaChars,
-            $value
+            search: $metaChars,
+            replace: $quotedMetaChars,
+            subject: $value
         );
     }
 }
