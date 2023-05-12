@@ -43,6 +43,8 @@ class GublerADSearchExtension extends Extension
             $container->setParameter('gubler_ad_search.server.port', $config['config']['port']);
             $container->setParameter('gubler_ad_search.server.bind_user', $config['config']['bind_user']);
             $container->setParameter('gubler_ad_search.server.bind_password', $config['config']['bind_password']);
+            $container->setParameter('gubler_ad_search.server.secure.enable', $config['config']['secure']['enable']);
+            $container->setParameter('gubler_ad_search.server.secure.cert_path', $config['config']['secure']['cert_path']);
             $loader->load('server_services.xml');
         } elseif ('array' === $config['connection_type']) {
             $container->setParameter('gubler_ad_search.array.test_users', $config['config']['test_users']);

@@ -20,7 +20,7 @@ interface LdapFactoryInterface
      * @param string $bindDn
      * @param string $bindPassword
      */
-    public function __construct(string $host, int $port, string $bindDn, string $bindPassword);
+    public function __construct(string $host, int $port, string $bindDn, string $bindPassword, bool $secure = false, ?string $certPath = null);
 
     /**
      * @return Ldap

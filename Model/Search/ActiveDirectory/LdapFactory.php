@@ -23,11 +23,25 @@ class LdapFactory implements LdapFactoryInterface
      * @param string $bindDn
      * @param string $bindPassword
      */
-    public function __construct(string $host, int $port, string $bindDn, string $bindPassword)
+    public function __construct(string $host, int $port, string $bindDn, string $bindPassword, bool $secure = false, ?string $certPath = null)
     {
+        $config = [
+            'host' => $host,
+            'port' => $port,
+        ];
+
+        if ($secure) {
+            $config['encryption'] = 'tls';
+
+            if (null !== $certPath) {
+                $config['options']['x_tls_cacertfile'] = $certPath;
+                $config['options']['x_tls_require_cert'] = true;
+            }
+        }
+
         $this->ldap = Ldap::create(
-            'ext_ldap',
-            array('connection_string' => 'ldap://'.$host.':'.$port)
+            adapter: 'ext_ldap',
+            config: $config,
         );
 
         $this->ldap->bind($bindDn, $bindPassword);

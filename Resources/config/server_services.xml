@@ -6,6 +6,8 @@
             <argument>%gubler_ad_search.server.port%</argument>
             <argument>%gubler_ad_search.server.bind_user%</argument>
             <argument>%gubler_ad_search.server.bind_password%</argument>
+            <argument>%gubler_ad_search.server.secure.enable%</argument>
+            <argument>%gubler_ad_search.server.secure.cert_path%</argument>
         </service>
         <service id="gubler_ad_search.search_adapter" class="Gubler\ADSearchBundle\Model\Search\ActiveDirectory\ServerSearch">
             <argument type="service" id="gubler_ad_search.ldap_factory"/>
