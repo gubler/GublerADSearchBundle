@@ -14,7 +14,7 @@ namespace Gubler\ADSearchBundle\Exception;
 
 class NotFoundADResultException extends \Exception
 {
-    public function __construct(int $code = 500, ?\Throwable $previous = null)
+    public function __construct(int $code = 500, \Throwable $previous = null)
     {
         $message = 'No Matching User Found';
 

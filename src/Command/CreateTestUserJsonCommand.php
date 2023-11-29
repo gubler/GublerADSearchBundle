@@ -469,7 +469,7 @@ class CreateTestUserJsonCommand extends Command
                 0 => $user['lastName'] . ', ' . $user['firstName'],
             ],
             'objectGUID' => [
-                0 => utf8_encode(string: (Uuid::fromString(uuid: $user['guid']))->toBinary()),
+                0 => mb_convert_encoding(Uuid::fromString(uuid: $user['guid'])->toBinary(), 'UTF-8', 'ISO-8859-1'),
             ],
             'userAccountControl' => [
                 0 => '111222',

@@ -42,8 +42,6 @@ final class ArraySearch implements ADSearchAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @param string[] $fields
      *
      * @return Entry[]
